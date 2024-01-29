@@ -1,3 +1,5 @@
+mod models;
+
 extern crate rocket;
 
 use rocket::{launch, routes};
