@@ -59,3 +59,28 @@ pub struct PasswordReset {
     valid: bool,
     unique_reset: String
 }
+
+pub struct UserSession {
+    pub user_token: String
+}
+
+#[rocket::async_trait]
+impl<'r> FromRequest<'r> for UserSession {
+    type Error = ();
+
+    async fn from_request(req: &'r Request<'_>) -> Outcome<UserSession, Self::Error> {
+        let token = req.cookies().get("user_id").unwrap().value();
+
+        let usr_token1 = token.to_string();
+        println!("Your id: {}", usr_token1);
+
+        if usr_token1.is_empty() {
+            Outcome::Error((Status::Unauthorized, ()))
+        } else {
+            let session_user = UserSession {
+                user_token: usr_token1,
+            };
+            Outcome::Success(session_user)
+        }
+    }
+}
