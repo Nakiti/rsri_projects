@@ -24,7 +24,7 @@ pub fn establish_connection_pg() -> PgConnection {
 
 // post "/api/signin"         signIn
 #[post("/signin", format="form", data="<user>")]
-pub fn signIn(jar: &CookieJar<'_>, user: Form<UserLogin>) -> Json<User> {
+pub fn sign_in(jar: &CookieJar<'_>, user: Form<UserLogin>) -> Json<User> {
     use self::schema::users::email_address;
     use self::schema::users::password;
 
@@ -55,6 +55,13 @@ pub fn signIn(jar: &CookieJar<'_>, user: Form<UserLogin>) -> Json<User> {
 
 
 // post "/api/signout"        signOut
+#[post("/signout")]
+pub fn sign_out(jar: &CookieJar<'_>) {
+    jar.remove("user_id"); 
+
+    //return to home page
+}
+
 // post "/api/reset"          reset
 // post "/api/resetpass"      resetPass
 // get  "/api/user/me"        userGetMe
