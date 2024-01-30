@@ -7,57 +7,65 @@ use rocket::Request;
 use rocket::http::Status;
 use rocket::FromForm;
 
-#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm)]
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
 #[diesel(table_name = users)]
 pub struct User {
-    user_id: String,
-    email_address: String,
-    first_name: String,
-    last_name: String,
-    theme: String,
-    key_binds: String,
-    admin: String,
+    pub user_id: String,
+    pub email_address: String,
+    pub first_name: String,
+    pub last_name: String,
+    pub theme: String,
+    pub key_binds: String,
+    pub admin: String,
+    pub password: String
+}
+
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
+#[diesel(table_name = users)]
+pub struct UserLogin {
+    pub email_address: String,
+    pub password: String
 }
 
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm)]
 #[diesel(belongs_to(User))]
 #[diesel(table_name = classes)]
 pub struct Class {
-    class_id: i32,
-    institution: String,
-    name: String,
-    instructor: String,
-    editor_lang: String,
-    user_id: String
+    pub class_id: i32,
+    pub institution: String,
+    pub name: String,
+    pub instructor: String,
+    pub editor_language: String,
+    pub user_id: String
 }
 
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm)]
 #[diesel(belongs_to(Class))]
 #[diesel(table_name = groups)]
 pub struct Group {
-    group_id: i32,
-    name: String,
-    editor_link: String,
-    class_id: i32
+    pub group_id: i32,
+    pub name: String,
+    pub editor_link: String,
+    pub class_id: i32
 }
 
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm)]
 #[diesel(table_name = enrollments)]
 pub struct Enrollment {
-    enrollment_id: i32,
-    user_id: String,
-    class_id: i32,
-    group_id: i32
+    pub enrollment_id: i32,
+    pub user_id: String,
+    pub class_id: i32,
+    pub group_id: i32
 }
 
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm)]
 #[diesel(table_name = password_resets)]
 pub struct PasswordReset {
-    password_reset_id: i32,
-    email: String,
-    code: String,
-    valid: bool,
-    unique_reset: String
+    pub password_reset_id: i32,
+    pub email: String,
+    pub code: String,
+    pub valid: bool,
+    pub unique_request: String
 }
 
 pub struct UserSession {

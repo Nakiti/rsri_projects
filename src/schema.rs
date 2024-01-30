@@ -48,6 +48,7 @@ diesel::table! {
         theme -> Varchar,
         key_binds -> Varchar,
         admin -> Varchar,
+        password -> Varchar,
     }
 }
 

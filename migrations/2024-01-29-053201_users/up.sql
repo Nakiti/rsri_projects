@@ -6,5 +6,7 @@ CREATE TABLE users (
     last_name VARCHAR NOT NULL,
     theme VARCHAR NOT NULL,
     key_binds VARCHAR NOT NULL,
-    admin VARCHAR NOT NULL
+    admin VARCHAR NOT NULL,
+    password VARCHAR NOT NULL
 );
+
