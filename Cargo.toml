@@ -12,5 +12,3 @@ dotenvy = "0.15"
 serde = "1.0.152"
 rocket_contrib = "0.4.4"
 
-[dependencies.rocket_dyn_templates]
-features = ["handlebars"]

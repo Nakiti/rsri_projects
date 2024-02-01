@@ -68,6 +68,15 @@ pub struct PasswordReset {
     pub unique_request: String
 }
 
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm)]
+#[diesel(table_name = password_resets)]
+pub struct PasswordResetDto {
+    pub email: String,
+    pub code: String,
+    pub valid: bool,
+    pub unique_request: String
+}
+
 pub struct UserSession {
     pub user_token: String
 }

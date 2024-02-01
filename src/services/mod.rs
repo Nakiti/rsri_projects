@@ -1,14 +1,15 @@
 extern crate diesel;
 extern crate rocket;
 use diesel::pg::PgConnection;
-use diesel::prelude::*;
+use diesel::{connection, prelude::*};
 use dotenvy::dotenv;
+use rocket::http::hyper::server::conn;
 use rocket::response::{status::Created, Debug};
 use rocket::serde::{json::Json, Deserialize, Serialize};
 use rocket::{get, post };
-use crate::models::{self, UserLogin};
-use crate::schema;
-use rocket_dyn_templates::{context, Template};
+use crate::models::{self, PasswordReset, PasswordResetDto, UserLogin};
+use crate::schema::{self, password_resets};
+use crate::schema::password_resets::email;
 use std::env;
 use rocket::form::Form;
 use crate::models::{User};
@@ -63,6 +64,36 @@ pub fn sign_out(jar: &CookieJar<'_>) {
 }
 
 // post "/api/reset"          reset
+#[post("/reset", format="form", data="<password_reset>")]
+pub fn reset(jar: &CookieJar<'_>, password_reset: Form<PasswordResetDto>) {
+    use self::schema::users::email_address;
+    use self::schema::password_resets::dsl::*;
+
+    let user_email = password_reset.email.to_string();
+
+    let connection = &mut establish_connection_pg();
+    let is_user = self::schema::users::dsl::users
+        .filter(email_address.eq(&user_email))
+        .load::<User>(connection)
+        .expect("Error loading posts");
+
+    if is_user.is_empty() {
+
+    } else {
+        let new_reset = PasswordResetDto {
+            email: user_email,
+            code: String::from("ABCDE"),
+            valid: true,
+            unique_request: String::from("HI"),
+        };
+
+        diesel::insert_into(password_resets)
+            .values(new_reset)
+            .execute(connection)
+            .expect("Error creating reset");
+    }
+
+}
 // post "/api/resetpass"      resetPass
 // get  "/api/user/me"        userGetMe
 // post "/api/enroll"         addRoster
