@@ -1,20 +1,16 @@
 extern crate diesel;
 extern crate rocket;
 use diesel::pg::PgConnection;
-use diesel::{connection, prelude::*};
+use diesel::prelude::*;
 use dotenvy::dotenv;
-use rocket::http::hyper::server::conn;
-use rocket::response::{status::Created, Debug};
 use rocket::serde::{json::Json, Deserialize, Serialize};
 use rocket::{get, post };
-use crate::models::{self, PasswordReset, PasswordResetDto, UserLogin};
-use crate::schema::{self, password_resets};
-use crate::schema::password_resets::email;
+use crate::models::{self, PasswordReset, PasswordResetDto, UserSession, User};
+use crate::schema::{self, password_resets, users};
 use std::env;
 use rocket::form::Form;
-use crate::models::{User};
 use rocket::http::CookieJar;
-
+use rocket::FromForm;
 
 pub fn establish_connection_pg() -> PgConnection {
     dotenv().ok();
@@ -23,15 +19,24 @@ pub fn establish_connection_pg() -> PgConnection {
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
 
+#[derive(Serialize, Deserialize, FromForm)]
+pub struct UserLogin {
+    pub email_address: String,
+    pub user_password: String
+}
+
 // post "/api/signin"         signIn
 #[post("/signin", format="form", data="<user>")]
 pub fn sign_in(jar: &CookieJar<'_>, user: Form<UserLogin>) -> Json<User> {
     use self::schema::users::email_address;
     use self::schema::users::password;
 
+    let user_email_address = user.email_address.to_string();
+    let user_password = user.user_password.to_string();
+
     let connection: &mut PgConnection = &mut establish_connection_pg();
     let current_user = self::schema::users::dsl::users
-        .filter((email_address.eq(user.email_address.to_string())).and(password.eq(user.password.to_string())))
+        .filter((email_address.eq(user_email_address)).and(password.eq(user_password)))
         .load::<User>(connection)
         .expect("Error");
 
@@ -41,19 +46,18 @@ pub fn sign_in(jar: &CookieJar<'_>, user: Form<UserLogin>) -> Json<User> {
     jar.add(("user-id", temp.user_id.to_string()));
 
     let current_user_object: User = User {
-        user_id: temp.user_id,
-        email_address: temp.email_address,
-        first_name: temp.first_name,
-        last_name: temp.last_name,
-        theme: temp.theme,
-        key_binds: temp.key_binds,
-        admin: temp.admin,
-        password: temp.password
+        user_id: temp.user_id.to_string(),
+        email_address: temp.email_address.to_string(),
+        first_name: temp.first_name.to_string(),
+        last_name: temp.last_name.to_string(),
+        theme: temp.theme.to_string(),
+        key_binds: temp.key_binds.to_string(),
+        admin: temp.admin.to_string(),
+        password: temp.password.to_string()
     };
 
     return Json(current_user_object)
 }
-
 
 // post "/api/signout"        signOut
 #[post("/signout")]
@@ -62,10 +66,14 @@ pub fn sign_out(jar: &CookieJar<'_>) {
 
     //return to home page
 }
+#[derive(Serialize, Deserialize, FromForm)]
+pub struct ResetForm {
+    email: String
+}
 
 // post "/api/reset"          reset
 #[post("/reset", format="form", data="<password_reset>")]
-pub fn reset(jar: &CookieJar<'_>, password_reset: Form<PasswordResetDto>) {
+pub fn create_reset(password_reset: Form<ResetForm>) {
     use self::schema::users::email_address;
     use self::schema::password_resets::dsl::*;
 
@@ -92,9 +100,50 @@ pub fn reset(jar: &CookieJar<'_>, password_reset: Form<PasswordResetDto>) {
             .execute(connection)
             .expect("Error creating reset");
     }
+}
 
+#[derive(Serialize, Deserialize, FromForm)]
+pub struct PasswordResetForm {
+    email: String,
+    new_password: String, 
+    code: String
 }
 // post "/api/resetpass"      resetPass
+#[post("/resetpass", format="form", data="<password_reset>")]
+pub fn reset_password(user_session: UserSession, password_reset: Form<PasswordResetForm>) {
+    use self::schema::password_resets::code;
+    use self::schema::users::dsl::*;
+    use self::schema::password_resets::dsl::*;
+    use crate::schema::password_resets::valid;
+
+    let reset_code = password_reset.code.to_string();
+    let new_password = password_reset.new_password.to_string();
+
+    let connection = &mut establish_connection_pg();
+
+    let is_code_valid = self::schema::password_resets::dsl::password_resets
+        .filter(code.eq(&reset_code).and(valid.eq(true)))
+        .load::<PasswordReset>(connection)
+        .expect("Error retrieving");
+
+    if is_code_valid.is_empty() {
+
+    } else {
+        let current_user_id = user_session.user_token;
+
+        diesel::update(users)
+            .filter(user_id.eq(current_user_id))
+            .set(password.eq(new_password))
+            .execute(connection)
+            .expect("Error Updating");
+
+        diesel::update(password_resets)
+            .filter(code.eq(&reset_code))
+            .set(valid.eq(false))
+            .execute(connection)
+            .expect("Error updating"); 
+    }
+}
 // get  "/api/user/me"        userGetMe
 // post "/api/enroll"         addRoster
 // post "/api/setlanguage"    setLanguage
