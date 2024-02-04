@@ -12,6 +12,8 @@ fn rocket() -> _ {
         .mount("/api", routes![
             services::sign_in,
             services::sign_out,
-            services::add_user
+            services::add_user,
+            services::add_group,
+            services::add_class
         ])  
 }

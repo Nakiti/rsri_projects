@@ -5,8 +5,8 @@ use diesel::prelude::*;
 use dotenvy::dotenv;
 use rocket::serde::{json::Value, json, json::Json, Deserialize, Serialize};
 use rocket::{get, post };
-use crate::models::{self, PasswordReset, PasswordResetDto, UserSession, User, UserDto};
-use crate::schema::{self, password_resets, users};
+use crate::models::{self, PasswordReset, PasswordResetDto, UserSession, User, UserDto, Group, GroupDto, Class, ClassDto, Enrollment, EnrollmentDto};
+use crate::schema::{self, password_resets, users, groups, classes, enrollments};
 use std::env;
 use rocket::form::Form;
 use rocket::http::CookieJar;
@@ -150,7 +150,7 @@ pub fn reset_password(user_session: UserSession, password_reset: Form<PasswordRe
 // get  "/api/roster/:class"  getRoster
 
 //post addUser
-#[post("/adduser", format="json", data = "<user>")]
+#[post("/add_user", format="json", data = "<user>")]
 pub fn add_user(jar: &CookieJar<'_>, user: Json<UserDto>) -> Json<UserDto> {
     //allow an instructor to add a student user and add it to the database. 
     use self::schema::users::dsl::*;
@@ -180,9 +180,39 @@ pub fn add_user(jar: &CookieJar<'_>, user: Json<UserDto>) -> Json<UserDto> {
 
     return Json(new_user)
 }
-//post addGroup
+
 //post addClass
-//post addEnroll
+#[post("/add_class", format="json", data = "<classDto>")]
+pub fn add_class(jar: &CookieJar<'_>, classDto: Json<ClassDto>) -> Json<String> {
+    use self::schema::classes::dsl::*;
+    use crate::models::ClassDto;
+    let connection = &mut establish_connection_pg();
+
+    diesel::insert_into(classes)
+        .values(classDto.into_inner())
+        .execute(connection)
+        .expect("Error saving new user");
+
+    return Json("Successfully added class".to_string())
+}
+
+//post addGroup
+#[post("/add_group", format="json", data = "<groupDto>")]
+pub fn add_group(jar: &CookieJar<'_>, groupDto: Json<GroupDto>) -> Json<String> {
+    use self::schema::groups::dsl::*;
+    use crate::models::GroupDto;
+    let connection = &mut establish_connection_pg();
+
+    diesel::insert_into(groups)
+        .values(groupDto.into_inner())
+        .execute(connection)
+        .expect("Error saving new user");
+
+
+    return Json("Successfully added group".to_string())
+}
+
+
 //post addRoster
 //post getRoster
 //post setLanguage
