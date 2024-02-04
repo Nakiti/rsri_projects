@@ -9,6 +9,9 @@ use rocket::{launch, routes};
 #[launch]
 fn rocket() -> _ {
     rocket::build()
-        .mount("/api", routes![services::sign_in])
-        .mount("/api", routes![services::sign_out])
+        .mount("/api", routes![
+            services::sign_in,
+            services::sign_out,
+            services::add_user
+        ])  
 }

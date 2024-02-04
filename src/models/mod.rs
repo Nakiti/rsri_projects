@@ -20,6 +20,19 @@ pub struct User {
     pub password: String
 }
 
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
+#[diesel(table_name = users)]
+pub struct UserDto {
+    pub user_id: String,
+    pub email_address: String,
+    pub first_name: String,
+    pub last_name: String,
+    pub theme: String,
+    pub key_binds: String,
+    pub admin: String,
+    pub password: String
+}
+
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm)]
 #[diesel(belongs_to(User))]
 #[diesel(table_name = classes)]

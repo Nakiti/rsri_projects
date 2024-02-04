@@ -3,9 +3,9 @@ extern crate rocket;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenvy::dotenv;
-use rocket::serde::{json::Json, Deserialize, Serialize};
+use rocket::serde::{json::Value, json, json::Json, Deserialize, Serialize};
 use rocket::{get, post };
-use crate::models::{self, PasswordReset, PasswordResetDto, UserSession, User};
+use crate::models::{self, PasswordReset, PasswordResetDto, UserSession, User, UserDto};
 use crate::schema::{self, password_resets, users};
 use std::env;
 use rocket::form::Form;
@@ -148,6 +148,48 @@ pub fn reset_password(user_session: UserSession, password_reset: Form<PasswordRe
 // post "/api/enroll"         addRoster
 // post "/api/setlanguage"    setLanguage
 // get  "/api/roster/:class"  getRoster
+
+//post addUser
+#[post("/adduser", format="json", data = "<user>")]
+pub fn add_user(jar: &CookieJar<'_>, user: Json<UserDto>) -> Json<UserDto> {
+    //allow an instructor to add a student user and add it to the database. 
+    use self::schema::users::dsl::*;
+    use crate::models::UserDto;
+    let connection = &mut establish_connection_pg();
+
+    let new_user = UserDto {
+        user_id: user.user_id.to_string(),
+        email_address: user.email_address.to_string(),
+        first_name: user.first_name.to_string(),
+        last_name: user.last_name.to_string(),
+        theme: user.theme.to_string(),
+        key_binds: user.key_binds.to_string(),
+        admin: user.admin.to_string(),
+        password: user.password.to_string()
+    };
+
+    let result = diesel::insert_into(users)
+        //.values(user.into())
+        .values(&new_user)
+        .execute(connection)
+        .expect("Error saving new user");
+
+    let session_user_id = user.user_id.to_string();
+    println!("Your user_id: {}", session_user_id);
+    jar.add(("user_id", session_user_id.clone()));
+
+    return Json(new_user)
+}
+//post addGroup
+//post addClass
+//post addEnroll
+//post addRoster
+//post getRoster
+//post setLanguage
+//post genRandomText
+//post sendMail
+
+
 
 
 
