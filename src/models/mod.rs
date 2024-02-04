@@ -33,6 +33,17 @@ pub struct Class {
 }
 
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm)]
+#[diesel(belongs_to(User))]
+#[diesel(table_name = classes)]
+pub struct ClassDto {
+    pub institution: String,
+    pub name: String,
+    pub instructor: String,
+    pub editor_language: String,
+    pub user_id: String
+}
+
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm)]
 #[diesel(belongs_to(Class))]
 #[diesel(table_name = groups)]
 pub struct Group {
@@ -43,8 +54,26 @@ pub struct Group {
 }
 
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm)]
+#[diesel(belongs_to(Class))]
+#[diesel(table_name = groups)]
+pub struct GroupDto {
+    pub name: String,
+    pub editor_link: String,
+    pub class_id: i32
+}
+
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm)]
 #[diesel(table_name = enrollments)]
 pub struct Enrollment {
+    pub enrollment_id: i32,
+    pub user_id: String,
+    pub class_id: i32,
+    pub group_id: i32
+}
+
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm)]
+#[diesel(table_name = enrollments)]
+pub struct EnrollmentDto {
     pub enrollment_id: i32,
     pub user_id: String,
     pub class_id: i32,
