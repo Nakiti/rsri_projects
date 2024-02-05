@@ -4,7 +4,7 @@ use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenvy::dotenv;
 use rocket::serde::{json::Value, json, json::Json, Deserialize, Serialize};
-use rocket::{get, post };
+use rocket::{execute, get, post };
 use crate::models::{self, PasswordReset, PasswordResetDto, UserSession, User, UserDto, Group, GroupDto, Class, ClassDto, Enrollment, EnrollmentDto};
 use crate::schema::{self, password_resets, users, groups, classes, enrollments};
 use std::env;
@@ -42,30 +42,31 @@ pub fn sign_in(jar: &CookieJar<'_>, user: Form<UserLogin>) -> Json<User> {
 
     // need to fix this
     // need to get User object from Vec<User>
-    let temp = current_user[0].clone();
-    jar.add(("user-id", temp.user_id.to_string()));
+    // let temp = current_user[0].clone();
+    jar.add(("user-id", current_user[0].clone().user_id.to_string()));
 
-    let current_user_object: User = User {
-        user_id: temp.user_id.to_string(),
-        email_address: temp.email_address.to_string(),
-        first_name: temp.first_name.to_string(),
-        last_name: temp.last_name.to_string(),
-        theme: temp.theme.to_string(),
-        key_binds: temp.key_binds.to_string(),
-        admin: temp.admin.to_string(),
-        password: temp.password.to_string()
-    };
+    // let current_user_object: User = User {
+    //     user_id: temp.user_id.to_string(),
+    //     email_address: temp.email_address.to_string(),
+    //     first_name: temp.first_name.to_string(),
+    //     last_name: temp.last_name.to_string(),
+    //     theme: temp.theme.to_string(),
+    //     key_binds: temp.key_binds.to_string(),
+    //     admin: temp.admin.to_string(),
+    //     password: temp.password.to_string()
+    // };
 
-    return Json(current_user_object)
+    return Json(current_user[0].clone())
 }
 
 // post "/api/signout"        signOut
 #[post("/signout")]
-pub fn sign_out(jar: &CookieJar<'_>) {
+pub fn sign_out(jar: &CookieJar<'_>) -> Json<String> {
     jar.remove("user_id"); 
 
-    //return to home page
+    return Json("User logged out".to_string())
 }
+
 #[derive(Serialize, Deserialize, FromForm)]
 pub struct ResetForm {
     email: String
@@ -144,10 +145,7 @@ pub fn reset_password(user_session: UserSession, password_reset: Form<PasswordRe
             .expect("Error updating"); 
     }
 }
-// get  "/api/user/me"        userGetMe
-// post "/api/enroll"         addRoster
-// post "/api/setlanguage"    setLanguage
-// get  "/api/roster/:class"  getRoster
+
 
 //post addUser
 #[post("/add_user", format="json", data = "<user>")]
@@ -212,10 +210,39 @@ pub fn add_group(jar: &CookieJar<'_>, groupDto: Json<GroupDto>) -> Json<String> 
     return Json("Successfully added group".to_string())
 }
 
+// get  "/api/user/me"        userGetMe
+#[get("/user")]
+pub fn get_user(user_session: UserSession) -> Json<User> {
+    use self::schema::users::dsl::*;
+    let connection = &mut establish_connection_pg();
 
+    let user_token = &user_session.user_token.to_string();
+
+    let current_user = self::schema::users::dsl::users
+        .filter(user_id.eq(user_token))
+        .load::<User>(connection)
+        .expect("Error loading user");
+
+    return Json(current_user[0].clone())
+}
 //post addRoster
 //post getRoster
 //post setLanguage
+#[post("/setLanguage", format="json", data="<class>")]
+pub fn change_language(class: Json<Class>) -> Json<String> {
+    use self::schema::classes::dsl::*;
+
+    let connection = &mut establish_connection_pg();
+
+    diesel::update(classes)
+        .filter(class_id.eq(class.clone().into_inner().class_id))
+        .set(editor_language.eq(class.clone().into_inner().editor_language))
+        .execute(connection)
+        .expect("Error updating language");
+
+    return Json("Language updated successfully".to_string())
+
+}
 //post genRandomText
 //post sendMail
 

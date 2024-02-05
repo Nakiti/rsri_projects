@@ -33,7 +33,7 @@ pub struct UserDto {
     pub password: String
 }
 
-#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm)]
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
 #[diesel(belongs_to(User))]
 #[diesel(table_name = classes)]
 pub struct Class {
