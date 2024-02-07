@@ -14,6 +14,8 @@ fn rocket() -> _ {
             services::sign_out,
             services::add_user,
             services::add_group,
-            services::add_class
+            services::add_class,
+            services::get_user,
+            services::change_language
         ])  
 }

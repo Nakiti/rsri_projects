@@ -26,8 +26,8 @@ pub struct UserLogin {
 }
 
 // post "/api/signin"         signIn
-#[post("/signin", format="form", data="<user>")]
-pub fn sign_in(jar: &CookieJar<'_>, user: Form<UserLogin>) -> Json<User> {
+#[post("/signin", format="json", data="<user>")]
+pub fn sign_in(jar: &CookieJar<'_>, user: Json<UserLogin>) -> Json<User> {
     use self::schema::users::email_address;
     use self::schema::users::password;
 
@@ -73,8 +73,8 @@ pub struct ResetForm {
 }
 
 // post "/api/reset"          reset
-#[post("/reset", format="form", data="<password_reset>")]
-pub fn create_reset(password_reset: Form<ResetForm>) {
+#[post("/reset", format="json", data="<password_reset>")]
+pub fn create_reset(password_reset: Json<ResetForm>) {
     use self::schema::users::email_address;
     use self::schema::password_resets::dsl::*;
 
@@ -110,8 +110,8 @@ pub struct PasswordResetForm {
     code: String
 }
 // post "/api/resetpass"      resetPass
-#[post("/resetpass", format="form", data="<password_reset>")]
-pub fn reset_password(user_session: UserSession, password_reset: Form<PasswordResetForm>) {
+#[post("/resetpass", format="json", data="<password_reset>")]
+pub fn reset_password(user_session: UserSession, password_reset: Json<PasswordResetForm>) {
     use self::schema::password_resets::code;
     use self::schema::users::dsl::*;
     use self::schema::password_resets::dsl::*;
@@ -227,6 +227,7 @@ pub fn get_user(user_session: UserSession) -> Json<User> {
 }
 //post addRoster
 //post getRoster
+
 //post setLanguage
 #[post("/setLanguage", format="json", data="<class>")]
 pub fn change_language(class: Json<Class>) -> Json<String> {
@@ -244,6 +245,8 @@ pub fn change_language(class: Json<Class>) -> Json<String> {
 
 }
 //post genRandomText
+
+
 //post sendMail
 
 
