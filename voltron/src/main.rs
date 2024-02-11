@@ -16,6 +16,8 @@ fn rocket() -> _ {
             services::add_group,
             services::add_class,
             services::get_user,
-            services::change_language
+            services::change_language,
+            services::create_reset,
+            services::reset_password
         ])  
 }

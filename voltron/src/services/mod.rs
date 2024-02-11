@@ -74,7 +74,7 @@ pub struct ResetForm {
 
 // post "/api/reset"          reset
 #[post("/reset", format="json", data="<password_reset>")]
-pub fn create_reset(password_reset: Json<ResetForm>) {
+pub fn create_reset(password_reset: Json<ResetForm>) -> Json<String> {
     use self::schema::users::email_address;
     use self::schema::password_resets::dsl::*;
 
@@ -87,7 +87,7 @@ pub fn create_reset(password_reset: Json<ResetForm>) {
         .expect("Error loading posts");
 
     if is_user.is_empty() {
-
+        return Json("User with given email address is not found".to_string())
     } else {
         let new_reset = PasswordResetDto {
             email: user_email,
@@ -100,6 +100,8 @@ pub fn create_reset(password_reset: Json<ResetForm>) {
             .values(new_reset)
             .execute(connection)
             .expect("Error creating reset");
+
+        return Json("Check given email".to_string())
     }
 }
 
@@ -111,7 +113,7 @@ pub struct PasswordResetForm {
 }
 // post "/api/resetpass"      resetPass
 #[post("/resetpass", format="json", data="<password_reset>")]
-pub fn reset_password(user_session: UserSession, password_reset: Json<PasswordResetForm>) {
+pub fn reset_password(user_session: UserSession, password_reset: Json<PasswordResetForm>) -> Json<String> {
     use self::schema::password_resets::code;
     use self::schema::users::dsl::*;
     use self::schema::password_resets::dsl::*;
@@ -128,7 +130,7 @@ pub fn reset_password(user_session: UserSession, password_reset: Json<PasswordRe
         .expect("Error retrieving");
 
     if is_code_valid.is_empty() {
-
+        return Json("code is invalid".to_string())
     } else {
         let current_user_id = user_session.user_token;
 
@@ -143,6 +145,8 @@ pub fn reset_password(user_session: UserSession, password_reset: Json<PasswordRe
             .set(valid.eq(false))
             .execute(connection)
             .expect("Error updating"); 
+
+        return Json("Succesfully reset password".to_string())
     }
 }
 
