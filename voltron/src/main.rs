@@ -18,6 +18,7 @@ fn rocket() -> _ {
             services::get_user,
             services::change_language,
             services::create_reset,
-            services::reset_password
+            services::reset_password,
+            services::add_roster
         ])  
 }

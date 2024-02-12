@@ -3,7 +3,7 @@ extern crate rocket;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use dotenvy::dotenv;
-use rocket::serde::{json::Value, json, json::Json, Deserialize, Serialize};
+use rocket::serde::{json::Value, json, json::Json, Deserialize, Serialize,json::from_value,json::to_string};
 use rocket::{execute, get, post };
 use crate::models::{self, PasswordReset, PasswordResetDto, UserSession, User, UserDto, Group, GroupDto, Class, ClassDto, Enrollment, EnrollmentDto};
 use crate::schema::{self, password_resets, users, groups, classes, enrollments};
@@ -150,6 +150,21 @@ pub fn reset_password(user_session: UserSession, password_reset: Json<PasswordRe
     }
 }
 
+//post addRoster, vector of enrollments, change data... 
+#[post("/add_roster", format="json", data= "<users>")]
+pub fn add_roster(jar: &CookieJar<'_>, user_session: UserSession, users: Json<Vec<UserDto>>) -> Json<String> {
+    //todo: check if user_session is authorized instructor
+   
+    //let usersList: Vec<UserDto> = json::from_str(usrs1.to_string()).unwrap();
+    let usersList: Vec<UserDto> = users.into_inner();
+    for user in usersList{
+        println!("{:?}", user.last_name.to_string());
+        //todo: check if user is in database. call following line only if not in database.
+        add_user(jar, Json(user));
+    }
+
+    return Json("Successs".to_string())
+}
 
 //post addUser
 #[post("/add_user", format="json", data = "<user>")]
@@ -185,7 +200,7 @@ pub fn add_user(jar: &CookieJar<'_>, user: Json<UserDto>) -> Json<UserDto> {
 
 //post addClass
 #[post("/add_class", format="json", data = "<classDto>")]
-pub fn add_class(jar: &CookieJar<'_>, classDto: Json<ClassDto>) -> Json<String> {
+pub fn add_class(classDto: Json<ClassDto>) -> Json<String> {
     use self::schema::classes::dsl::*;
     use crate::models::ClassDto;
     let connection = &mut establish_connection_pg();
@@ -200,7 +215,7 @@ pub fn add_class(jar: &CookieJar<'_>, classDto: Json<ClassDto>) -> Json<String> 
 
 //post addGroup
 #[post("/add_group", format="json", data = "<groupDto>")]
-pub fn add_group(jar: &CookieJar<'_>, groupDto: Json<GroupDto>) -> Json<String> {
+pub fn add_group(groupDto: Json<GroupDto>) -> Json<String> {
     use self::schema::groups::dsl::*;
     use crate::models::GroupDto;
     let connection = &mut establish_connection_pg();
@@ -229,8 +244,12 @@ pub fn get_user(user_session: UserSession) -> Json<User> {
 
     return Json(current_user[0].clone())
 }
-//post addRoster
+
+
+
 //post getRoster
+
+//post addEnroll - create enrollment for a student into a class
 
 //post setLanguage
 #[post("/setLanguage", format="json", data="<class>")]
