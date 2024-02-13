@@ -87,11 +87,28 @@ pub struct Enrollment {
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm)]
 #[diesel(table_name = enrollments)]
 pub struct EnrollmentDto {
-    pub enrollment_id: i32,
     pub user_id: String,
     pub class_id: i32,
     pub group_id: i32
 }
+
+#[derive(Serialize, Deserialize, FromForm)]
+pub struct EnrollmentRequestDto {
+    pub class_id: i32,
+    pub users: Vec<EnrollUserDto>
+}
+
+#[derive(Serialize, Deserialize, FromForm)]
+pub struct EnrollUserDto {
+    pub user_id: String,
+    pub email_address: String,
+    pub first_name: String,
+    pub last_name: String,
+    pub password: String, 
+    pub group_id: i32
+}
+
+
 
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm)]
 #[diesel(table_name = password_resets)]

@@ -6,6 +6,7 @@ use dotenvy::dotenv;
 use rocket::serde::{json::Value, json, json::Json, Deserialize, Serialize,json::from_value,json::to_string};
 use rocket::{execute, get, post };
 use crate::models::{self, PasswordReset, PasswordResetDto, UserSession, User, UserDto, Group, GroupDto, Class, ClassDto, Enrollment, EnrollmentDto};
+use crate::models::{EnrollmentRequestDto, EnrollUserDto};
 use crate::schema::{self, password_resets, users, groups, classes, enrollments};
 use std::env;
 use rocket::form::Form;
@@ -151,19 +152,56 @@ pub fn reset_password(user_session: UserSession, password_reset: Json<PasswordRe
 }
 
 //post addRoster, vector of enrollments, change data... 
-#[post("/add_roster", format="json", data= "<users>")]
-pub fn add_roster(jar: &CookieJar<'_>, user_session: UserSession, users: Json<Vec<UserDto>>) -> Json<String> {
+#[post("/add_roster", format="json", data= "<rosterRequest>")]
+pub fn add_roster(jar: &CookieJar<'_>, user_session: UserSession, rosterRequest: Json<EnrollmentRequestDto>) -> Json<String> {
     //todo: check if user_session is authorized instructor
-   
-    //let usersList: Vec<UserDto> = json::from_str(usrs1.to_string()).unwrap();
-    let usersList: Vec<UserDto> = users.into_inner();
+    use self::schema::users::dsl::*;
+    use self::schema::enrollments::dsl::*;
+
+    let connection = &mut establish_connection_pg();
+
+    let roster = rosterRequest.into_inner();
+
+    let a_class_id = roster.class_id;
+
+    let usersList: Vec<EnrollUserDto> = roster.users;
     for user in usersList{
+        println!("{:?}", a_class_id);
         println!("{:?}", user.last_name.to_string());
         //todo: check if user is in database. call following line only if not in database.
-        add_user(jar, Json(user));
+        if (!is_existing_user(user.user_id.to_string())) {
+            let new_user = UserDto {
+                user_id: user.user_id.to_string(),
+                email_address: user.email_address.to_string(),
+                first_name: user.first_name.to_string(),
+                last_name: user.last_name.to_string(),
+                theme: "default".to_string(),
+                key_binds: "k".to_string(),
+                admin: "false".to_string(),
+                password: user.password.to_string()
+            };
+
+            add_user(jar, Json(new_user));
+        }
+
+        else {
+            println!("User {:?}", user.user_id.to_string());
+        }
+
+        let new_enroll = EnrollmentDto {
+            user_id: user.user_id.to_string(),
+            class_id: a_class_id,
+            group_id: user.group_id
+        };
+
+        diesel::insert_into(enrollments)
+            .values(&new_enroll)
+            .execute(connection)
+            .expect("Error saving new user");
+
     }
 
-    return Json("Successs".to_string())
+    return Json("Successfully added roster".to_string())
 }
 
 //post addUser
@@ -243,6 +281,24 @@ pub fn get_user(user_session: UserSession) -> Json<User> {
         .expect("Error loading user");
 
     return Json(current_user[0].clone())
+}
+
+pub fn is_existing_user(a_user_id: String) -> bool {
+    use self::schema::users::dsl::*;
+    let connection = &mut establish_connection_pg();
+
+
+    let db_user = self::schema::users::dsl::users
+        .filter(user_id.eq(a_user_id))
+        .load::<User>(connection)
+        .expect("Error finding user");
+
+    if (db_user.len() > 0) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 
