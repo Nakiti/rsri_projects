@@ -1,0 +1,11 @@
+C:\Users\nakit\OneDrive\Documents\Coding\rsri_projects\conf\target\debug\deps\libtinyvec-dc8d1e0eaa5518d2.rmeta: C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\tinyvec-1.6.0\src\lib.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\tinyvec-1.6.0\src\array.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\tinyvec-1.6.0\src\array\generated_impl.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\tinyvec-1.6.0\src\arrayvec.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\tinyvec-1.6.0\src\arrayvec_drain.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\tinyvec-1.6.0\src\slicevec.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\tinyvec-1.6.0\src\tinyvec.rs
+
+C:\Users\nakit\OneDrive\Documents\Coding\rsri_projects\conf\target\debug\deps\tinyvec-dc8d1e0eaa5518d2.d: C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\tinyvec-1.6.0\src\lib.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\tinyvec-1.6.0\src\array.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\tinyvec-1.6.0\src\array\generated_impl.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\tinyvec-1.6.0\src\arrayvec.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\tinyvec-1.6.0\src\arrayvec_drain.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\tinyvec-1.6.0\src\slicevec.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\tinyvec-1.6.0\src\tinyvec.rs
+
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\tinyvec-1.6.0\src\lib.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\tinyvec-1.6.0\src\array.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\tinyvec-1.6.0\src\array\generated_impl.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\tinyvec-1.6.0\src\arrayvec.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\tinyvec-1.6.0\src\arrayvec_drain.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\tinyvec-1.6.0\src\slicevec.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\tinyvec-1.6.0\src\tinyvec.rs:

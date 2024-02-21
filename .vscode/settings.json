@@ -1,5 +1,6 @@
 {
     "rust-analyzer.linkedProjects": [
-        ".\\voltron\\Cargo.toml"
+        ".\\voltron\\Cargo.toml",
+        ".\\conf\\Cargo.toml"
     ]
 }

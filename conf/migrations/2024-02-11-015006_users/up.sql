@@ -5,5 +5,6 @@ CREATE TABLE users (
     name VARCHAR NOT NULL,
     email VARCHAR NOT NULL,
     affiliation VARCHAR NOT NULL,
-    level VARCHAR NOT NULL
+    level VARCHAR NOT NULL,
+    password VARCHAR NOT NULL
 );

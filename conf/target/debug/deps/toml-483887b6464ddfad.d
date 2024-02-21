@@ -1,0 +1,12 @@
+C:\Users\nakit\OneDrive\Documents\Coding\rsri_projects\conf\target\debug\deps\libtoml-483887b6464ddfad.rmeta: C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\lib.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\value.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\datetime.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\ser.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\de.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\tokens.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\macros.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\spanned.rs
+
+C:\Users\nakit\OneDrive\Documents\Coding\rsri_projects\conf\target\debug\deps\toml-483887b6464ddfad.d: C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\lib.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\value.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\datetime.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\ser.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\de.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\tokens.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\macros.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\spanned.rs
+
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\lib.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\value.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\datetime.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\ser.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\de.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\tokens.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\macros.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\toml-0.4.10\src\spanned.rs:

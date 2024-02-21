@@ -46,6 +46,7 @@ diesel::table! {
         email -> Varchar,
         affiliation -> Varchar,
         level -> Varchar,
+        password -> Varchar,
     }
 }
 
