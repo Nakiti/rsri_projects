@@ -112,6 +112,7 @@ pub struct PasswordResetForm {
     new_password: String, 
     code: String
 }
+
 // post "/api/resetpass"      resetPass
 #[post("/resetpass", format="json", data="<password_reset>")]
 pub fn reset_password(user_session: UserSession, password_reset: Json<PasswordResetForm>) -> Json<String> {
@@ -151,6 +152,56 @@ pub fn reset_password(user_session: UserSession, password_reset: Json<PasswordRe
     }
 }
 
+//can change to take class_id as json input if needed
+//post addEnrollment - enrollm a student/user into a class + group. user follows format of EnrollUserDto
+#[post("/enroll", format="json", data= "<enroll>")]
+pub fn add_enrollment(jar: &CookieJar<'_>, enroll: Json<EnrollmentRequestDto>) -> Json<String> {
+    use self::schema::users::dsl::*;
+    use self::schema::enrollments::dsl::*;
+
+    let connection = &mut establish_connection_pg();
+
+    let enroll = enroll.into_inner();
+
+    let a_class_id = enroll.class_id;
+
+    let mut user = &enroll.users[0];
+
+    if (!is_existing_user(user.user_id.to_string())) {
+        let new_user = UserDto {
+            user_id: user.user_id.to_string(),
+            email_address: user.email_address.to_string(),
+            first_name: user.first_name.to_string(),
+            last_name: user.last_name.to_string(),
+            theme: "default".to_string(),
+            key_binds: "k".to_string(),
+            admin: "false".to_string(),
+            password: user.password.to_string()
+        };
+
+        add_user(jar, Json(new_user));
+    }
+    //for testing
+    else {
+        println!("User {:?}", user.user_id.to_string());
+    }
+
+    let new_enroll = EnrollmentDto {
+        user_id: user.user_id.to_string(),
+        class_id: a_class_id,
+        group_id: user.group_id
+    };
+
+    diesel::insert_into(enrollments)
+        .values(&new_enroll)
+        .execute(connection)
+        .expect("Error saving new user");
+
+    return Json("Successfully enrolled student".to_string())
+    
+}
+
+
 //post addRoster, vector of enrollments, change data... 
 #[post("/add_roster", format="json", data= "<rosterRequest>")]
 pub fn add_roster(jar: &CookieJar<'_>, user_session: UserSession, rosterRequest: Json<EnrollmentRequestDto>) -> Json<String> {
@@ -166,6 +217,7 @@ pub fn add_roster(jar: &CookieJar<'_>, user_session: UserSession, rosterRequest:
 
     let usersList: Vec<EnrollUserDto> = roster.users;
     for user in usersList{
+        //test
         println!("{:?}", a_class_id);
         println!("{:?}", user.last_name.to_string());
         //todo: check if user is in database. call following line only if not in database.
@@ -183,7 +235,7 @@ pub fn add_roster(jar: &CookieJar<'_>, user_session: UserSession, rosterRequest:
 
             add_user(jar, Json(new_user));
         }
-
+        //for testing
         else {
             println!("User {:?}", user.user_id.to_string());
         }
@@ -203,6 +255,38 @@ pub fn add_roster(jar: &CookieJar<'_>, user_session: UserSession, rosterRequest:
 
     return Json("Successfully added roster".to_string())
 }
+
+
+//get getRoster
+#[get("/roster/<a_class_id>")]
+pub fn get_roster(a_class_id: i32, user_session: UserSession) -> Json<Vec<User>> {
+    use self::schema::enrollments::dsl::*;
+    use self::schema::enrollments::class_id;
+    use self::schema::users::user_id;
+       
+    let connection = &mut establish_connection_pg();
+
+    let all_enrolls = self::schema::enrollments::dsl::enrollments
+        .filter(class_id.eq(a_class_id))
+        .load::<Enrollment>(connection)
+        .expect("Error loading roster");
+
+    //iterate through enrollment vector and find their corresponding user objects, then return
+    let mut users: Vec<User> = Vec::new();
+
+    for enroll in all_enrolls {
+        let user = self::schema::users::dsl::users
+            .filter(user_id.eq(enroll.user_id))
+            .load::<User>(connection)
+            .expect("Error loading user");
+
+        users.push(user[0].clone());
+    }
+
+    return Json(users)
+}
+
+
 
 //post addUser
 #[post("/add_user", format="json", data = "<user>")]
@@ -300,12 +384,6 @@ pub fn is_existing_user(a_user_id: String) -> bool {
         return false;
     }
 }
-
-
-
-//post getRoster
-
-//post addEnroll - create enrollment for a student into a class
 
 //post setLanguage
 #[post("/setLanguage", format="json", data="<class>")]
