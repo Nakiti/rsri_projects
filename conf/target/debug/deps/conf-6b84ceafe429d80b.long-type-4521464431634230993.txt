@@ -1,0 +1,1 @@
+SelectStatement<FromClause<schema::papers::table>, query_builder::select_clause::DefaultSelectClause<FromClause<schema::papers::table>>, query_builder::distinct_clause::NoDistinctClause, query_builder::where_clause::WhereClause<schema::users::columns::userid>>

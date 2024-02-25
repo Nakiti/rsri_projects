@@ -1,0 +1,1 @@
+diesel::expression::grouped::Grouped<diesel::expression::operators::And<diesel::expression::grouped::Grouped<diesel::expression::operators::Eq<schema::papers::columns::author, diesel::expression::bound::Bound<Integer, i32>>>, _>>

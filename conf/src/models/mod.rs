@@ -49,6 +49,14 @@ pub struct AssignmentReview {
 }
 
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
+#[diesel(table_name = assignment_reviews)]
+pub struct AssignmentReviewDto {
+    pub paperid: i32,
+    pub userid: i32,
+    pub assign_type: String
+}
+
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
 #[diesel(table_name = paper_coauthors)]
 pub struct PaperCouthor {
     pub paper_coauthor_id: i32,
