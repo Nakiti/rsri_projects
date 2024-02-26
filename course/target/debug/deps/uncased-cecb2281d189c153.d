@@ -1,0 +1,11 @@
+/Users/nkris/Desktop/projects/rsri_projects/course/target/debug/deps/libuncased-cecb2281d189c153.rmeta: /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uncased-0.9.10/src/lib.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uncased-0.9.10/src/serde.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uncased-0.9.10/src/owned.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uncased-0.9.10/src/borrowed.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uncased-0.9.10/src/as_uncased.rs
+
+/Users/nkris/Desktop/projects/rsri_projects/course/target/debug/deps/libuncased-cecb2281d189c153.rlib: /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uncased-0.9.10/src/lib.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uncased-0.9.10/src/serde.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uncased-0.9.10/src/owned.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uncased-0.9.10/src/borrowed.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uncased-0.9.10/src/as_uncased.rs
+
+/Users/nkris/Desktop/projects/rsri_projects/course/target/debug/deps/uncased-cecb2281d189c153.d: /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uncased-0.9.10/src/lib.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uncased-0.9.10/src/serde.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uncased-0.9.10/src/owned.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uncased-0.9.10/src/borrowed.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uncased-0.9.10/src/as_uncased.rs
+
+/Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uncased-0.9.10/src/lib.rs:
+/Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uncased-0.9.10/src/serde.rs:
+/Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uncased-0.9.10/src/owned.rs:
+/Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uncased-0.9.10/src/borrowed.rs:
+/Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uncased-0.9.10/src/as_uncased.rs:

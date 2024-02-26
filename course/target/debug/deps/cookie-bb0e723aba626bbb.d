@@ -1,0 +1,12 @@
+/Users/nkris/Desktop/projects/rsri_projects/course/target/debug/deps/libcookie-bb0e723aba626bbb.rmeta: /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/lib.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/builder.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/parse.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/jar.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/delta.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/draft.rs
+
+/Users/nkris/Desktop/projects/rsri_projects/course/target/debug/deps/libcookie-bb0e723aba626bbb.rlib: /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/lib.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/builder.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/parse.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/jar.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/delta.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/draft.rs
+
+/Users/nkris/Desktop/projects/rsri_projects/course/target/debug/deps/cookie-bb0e723aba626bbb.d: /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/lib.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/builder.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/parse.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/jar.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/delta.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/draft.rs
+
+/Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/lib.rs:
+/Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/builder.rs:
+/Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/parse.rs:
+/Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/jar.rs:
+/Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/delta.rs:
+/Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/cookie-0.11.5/src/draft.rs:

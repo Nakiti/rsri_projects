@@ -1,0 +1,12 @@
+/Users/nkris/Desktop/projects/rsri_projects/course/target/debug/deps/libstate-9f7404523115be50.rmeta: /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/lib.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/ident_hash.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/cell.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/init.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/shim.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/type_map.rs
+
+/Users/nkris/Desktop/projects/rsri_projects/course/target/debug/deps/libstate-9f7404523115be50.rlib: /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/lib.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/ident_hash.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/cell.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/init.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/shim.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/type_map.rs
+
+/Users/nkris/Desktop/projects/rsri_projects/course/target/debug/deps/state-9f7404523115be50.d: /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/lib.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/ident_hash.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/cell.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/init.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/shim.rs /Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/type_map.rs
+
+/Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/lib.rs:
+/Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/ident_hash.rs:
+/Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/cell.rs:
+/Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/init.rs:
+/Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/shim.rs:
+/Users/nkris/.cargo/registry/src/index.crates.io-6f17d22bba15001f/state-0.6.0/src/type_map.rs:

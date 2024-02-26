@@ -1,0 +1,1 @@
+/Users/nkris/Desktop/projects/rsri_projects/course/target/debug/course: /Users/nkris/Desktop/projects/rsri_projects/course/src/main.rs /Users/nkris/Desktop/projects/rsri_projects/course/src/models/mod.rs /Users/nkris/Desktop/projects/rsri_projects/course/src/schema.rs /Users/nkris/Desktop/projects/rsri_projects/course/src/services/mod.rs
