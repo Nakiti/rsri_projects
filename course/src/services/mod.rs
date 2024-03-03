@@ -23,24 +23,24 @@ pub fn establish_connection_pg() -> PgConnection {
 
 //add return
 #[post("/login", format="json", data="<user>")]
-pub fn login(jar: &CookieJar<'_>, user: Json<User>){
+pub fn login(jar: &CookieJar<'_>, user: Json<UserDto>) {
     use self::schema::users::dsl::*;
 
-    let user_username = user.username.to_string();
-    let user_email = user.email.to_string();
     let connection = &mut establish_connection_pg();
 
     let is_user = self::schema::users::dsl::users
-        .filter((username.eq(user_username)).and(email.eq(user_email)))
+        .filter(username.eq(user.username.to_string()).and(email.eq(user.email.to_string())).and(name.eq(user.name.to_string())))
         .load::<User>(connection)
         .expect("Error loading users");
 
     if is_user.is_empty() {
-        //add
+        //
     } else {
-        let session_id = is_user[0].clone().user_id.to_string();
-        jar.add(("user_id", session_id));
+        let session_id = is_user[0].clone().username.to_string();
+        jar.add(("username", session_id));
     }
+
+    //call view_courses
 }
 
 //need to decide between json or form data
@@ -62,10 +62,10 @@ pub fn register(jar: &CookieJar<'_>, user: Json<UserDto>) {
         .values(new_user)
         .execute(connection)
         .expect("Error creating new user");
-
-    //create helper function for retrieving user object in database, then use returned generated id as session_id
-    //let session_id = user.user_id.to_string();
-    //jar.add(("user_id", session_id.clone())); //add user_id to cookies
+    
+    //use username as session id
+    let session_id = user.username.to_string();
+    jar.add(("username", session_id.clone())); //add username to cookies
 }
 
 //create course
@@ -75,18 +75,21 @@ pub fn create_course(course: Json<CourseDto>, user_session: UserSession) {
 
     let connection: &mut PgConnection = &mut establish_connection_pg();
 
-    let user_token = &user_session.user_token;
+    let user_token = user_session.user_token;
 
-    //add verification that user_session.role has instructor role
+    //add verification that user has instructor role
+    let current_user = get_user(user_token.to_string());
 
-    let new_course = CourseDto {
-        name: course.name.to_string()
-    };
+    if (current_user.role == "instructor") {
+        let new_course = CourseDto {
+            name: course.name.to_string()
+        };
 
-    diesel::insert_into(courses)
-        .values(new_course)
-        .execute(connection)
-        .expect("Error creating new course");
+        diesel::insert_into(courses)
+            .values(new_course)
+            .execute(connection)
+            .expect("Error creating new course");
+    }
 
 }
 
@@ -97,19 +100,22 @@ pub fn create_course_instructor(course_instructor: Json<CourseInstructorDto>, us
 
     let connection: &mut PgConnection = &mut establish_connection_pg();
 
-    let user_token = &user_session.user_token;
+    let user_token = user_session.user_token;
 
-    //add verification that user_session.role has instructor role
+    //add verification that current user has instructor role
+    let current_user = get_user(user_token.to_string());
 
-    let new_course_instructor = CourseInstructorDto {
-        course_id: course_instructor.course_id,
-        instructor_id: course_instructor.instructor_id
-    };
+    if (current_user.role == "instructor") {
+        let new_course_instructor = CourseInstructorDto {
+            course_id: course_instructor.course_id,
+            instructor_id: course_instructor.instructor_id
+        };
 
-    diesel::insert_into(course_instructors)
-        .values(new_course_instructor)
-        .execute(connection)
-        .expect("Error forming new course instructor pair");
+        diesel::insert_into(course_instructors)
+            .values(new_course_instructor)
+            .execute(connection)
+            .expect("Error forming new course instructor pair");
+    }
 }
 
 //create enrollment
@@ -119,22 +125,23 @@ pub fn create_enrollment(enrollment: Json<EnrollmentDto>, user_session: UserSess
 
     let connection: &mut PgConnection = &mut establish_connection_pg();
 
-    let user_token = &user_session.user_token;
+    let user_token = user_session.user_token;
 
     //add verification that user_session.role is instructor role
+    let current_user = get_user(user_token.to_string());
 
+    if (current_user.role == "instructor") {
+        let new_enrollment = EnrollmentDto {
+            student_id: enrollment.student_id,
+            course_id: enrollment.course_id,
+            grade: enrollment.grade.to_string()
+        };
 
-    let new_enrollment = EnrollmentDto {
-        student_id: enrollment.student_id,
-        course_id: enrollment.course_id,
-        grade: enrollment.grade.to_string()
-    };
-
-    diesel::insert_into(enrollments)
-        .values(new_enrollment)
-        .execute(connection)
-        .expect("Error creating new enrollment");
-
+        diesel::insert_into(enrollments)
+            .values(new_enrollment)
+            .execute(connection)
+            .expect("Error creating new enrollment");
+    }
 }
 
 //create assignment
@@ -144,22 +151,26 @@ pub fn create_assignment(assignment: Json<AssignmentDto>, user_session: UserSess
 
     let connection: &mut PgConnection = &mut establish_connection_pg();
 
-    let user_token = &user_session.user_token;
+    let user_token = user_session.user_token;
 
-    //add verification that user_session.role is instructor role
+    //add verification that user is instructor role
+    let current_user = get_user(user_token.to_string());
 
+    if (current_user.role == "instructor") {
+        let new_assignment = AssignmentDto {
+            name: assignment.name.to_string(),
+            course_id: assignment.course_id,
+            description: assignment.description.to_string()
+        };
 
-    let new_assignment = AssignmentDto {
-        name: assignment.name.to_string(),
-        course_id: assignment.course_id,
-        description: assignment.description.to_string()
-    };
-
-    diesel::insert_into(assignments)
-        .values(new_assignment)
-        .execute(connection)
-        .expect("Error creating new enrollment");
-
+        diesel::insert_into(assignments)
+            .values(new_assignment)
+            .execute(connection)
+            .expect("Error creating new enrollment");
+    }
+    else {
+        //return error 
+    }
 }
 
 //create submission
@@ -181,14 +192,115 @@ pub fn create_submission(submission: Json<SubmissionDto>, user_session: UserSess
         .values(new_submission)
         .execute(connection)
         .expect("Error creating new enrollment");
-
 }
 
 
-//view courses + name,gpa for user
+//view courses for user (test using json)
+#[get("/view_courses_test")]
+pub fn view_courses_test(user_session: UserSession) -> Json<Vec<(CourseInstructor, Course)>> {
+    use self::schema::enrollments::dsl::*;
+
+    let connection: &mut PgConnection = &mut establish_connection_pg();
+
+    let user_token = user_session.user_token;
+
+    let current_user = get_user(user_token.to_string());
+    
+    //let enrolled_courses = get_enrollments(current_user.user_id);    
+
+    let instructor_courses = get_instructor_courses(current_user.user_id);
+
+    //return Json(enrolled_courses)
+    return Json(instructor_courses)
+
+}
+
+//to be created- final version of above method
+//it will return template probably, return different info based on student/instructor
+#[get("/view_courses")]
+pub fn view_courses(user_session: UserSession) {
+    use self::schema::enrollments::dsl::*;
+
+    let connection: &mut PgConnection = &mut establish_connection_pg();
+
+    let user_token = user_session.user_token;
+
+    let current_user = get_user(user_token.to_string());
+     
+     
+    //two cases depending on whether user is student or teacher
+    if (current_user.role == "student") {
+        //get enrollments + joined course table  ---> return template within if statement
+        let enrolled_courses = get_enrollments(current_user.user_id);    
+        //get course objects using join table    
+    }
+    else if (current_user.role == "instructor") {
+        //get course_instructor objects where user_id = instructor_id
+        let instructor_courses = get_instructor_courses(current_user.user_id);
+    }
+
+    //return template
+
+}
+
 
 //view assignments from all courses (+ specific course) for user
 
 //view submissions for user (and for instructors), both all and for specific courses    
 
-//
+
+// Helper Functions
+
+//get user based on username
+pub fn get_user(user_name: String) -> User {
+    use self::schema::users::username;
+
+    let connection = &mut establish_connection_pg();
+
+    let user = self::schema::users::dsl::users
+        .filter(username.eq(user_name))
+        .load::<User>(connection)
+        .expect("Error loading user");
+
+    return user[0].clone()
+}
+
+//get enrollments
+pub fn get_enrollments(current_user_id: i32) -> Vec<(Enrollment, Course)> {
+    use crate::schema::enrollments::student_id;
+    use self::schema::courses;
+
+
+    let connection = &mut establish_connection_pg();
+
+    let enrolled_courses: Vec<(Enrollment, Course)> = enrollments::table
+        .inner_join(courses::table)
+        .filter(student_id.eq(current_user_id))
+        .select((Enrollment::as_select(), Course::as_select()))
+        .load::<(Enrollment, Course)>(connection)
+        .expect("Error loading enrollments");
+
+    return enrolled_courses
+}
+
+//get instructor courses
+pub fn get_instructor_courses(current_user_id: i32) -> Vec<(CourseInstructor, Course)> {
+    use self::schema::course_instructors::instructor_id;
+
+    let connection = &mut establish_connection_pg();
+
+    let instructor_courses = course_instructors::table
+        .inner_join(courses::table)
+        .filter(instructor_id.eq(current_user_id))
+        .select((CourseInstructor::as_select(), Course::as_select()))
+        .load::<(CourseInstructor, Course)>(connection)
+        .expect("Error loading courses");
+
+    return instructor_courses
+}
+
+
+
+
+
+

@@ -7,7 +7,7 @@ use rocket::Request;
 use rocket::http::Status;
 use rocket::FromForm;
 
-#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone, Selectable)]
 #[diesel(table_name = users)]
 pub struct User {
     pub user_id: i32,
@@ -18,7 +18,7 @@ pub struct User {
 }
 
 //can remove any variables that dont need to be inputted to create a user
-#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone, Selectable)]
 #[diesel(table_name = users)]
 pub struct UserDto {
     pub username: String,
@@ -27,7 +27,7 @@ pub struct UserDto {
     pub role: String
 }
 
-#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone, Selectable)]
 #[diesel(table_name = courses)]
 pub struct Course {
     pub course_id: i32,
@@ -35,13 +35,13 @@ pub struct Course {
 }
 
 
-#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone, Selectable)]
 #[diesel(table_name = courses)]
 pub struct CourseDto {
     pub name: String
 }
 
-#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone, Selectable)]
 #[diesel(table_name = course_instructors)]
 pub struct CourseInstructor {
     pub course_instructor_id: i32,
@@ -49,14 +49,14 @@ pub struct CourseInstructor {
     pub instructor_id: i32
 }
 
-#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone, Selectable)]
 #[diesel(table_name = course_instructors)]
 pub struct CourseInstructorDto {
     pub course_id: i32,
     pub instructor_id: i32
 }
 
-#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone, Selectable)]
 #[diesel(table_name = enrollments)]
 pub struct Enrollment {
     pub enrollment_id: i32,
@@ -65,7 +65,7 @@ pub struct Enrollment {
     pub grade: String
 }
 
-#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone, Selectable)]
 #[diesel(table_name = enrollments)]
 pub struct EnrollmentDto {
     pub student_id: i32,
@@ -73,7 +73,7 @@ pub struct EnrollmentDto {
     pub grade: String
 }
 
-#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone, Selectable)]
 #[diesel(belongs_to(Course))]
 #[diesel(table_name = assignments)]
 pub struct Assignment {
@@ -83,7 +83,7 @@ pub struct Assignment {
     pub description: String
 }
 
-#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone, Selectable)]
 #[diesel(belongs_to(Course))]
 #[diesel(table_name = assignments)]
 pub struct AssignmentDto {
@@ -92,7 +92,7 @@ pub struct AssignmentDto {
     pub description: String
 }
 
-#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone, Selectable)]
 #[diesel(belongs_to(Course))]
 #[diesel(table_name = submissions)]
 pub struct Submission {
@@ -103,7 +103,7 @@ pub struct Submission {
     pub grade: String
 }
 
-#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone, Selectable)]
 #[diesel(belongs_to(Course))]
 #[diesel(table_name = submissions)]
 pub struct SubmissionDto {
@@ -114,7 +114,7 @@ pub struct SubmissionDto {
 }
 
 pub struct UserSession {
-    pub user_token: i32
+    pub user_token: String
 }
 
 #[rocket::async_trait]
@@ -122,16 +122,17 @@ impl<'r> FromRequest<'r> for UserSession {
     type Error = ();
 
     async fn from_request(req: &'r Request<'_>) -> Outcome<UserSession, Self::Error> {
-        let token = req.cookies().get("user_id").unwrap().value();
+        let token = req.cookies().get("username").unwrap().value();
 
-        let usr_token1 = token;
-        println!("Your id: {}", usr_token1);
+        //add encryption later
+        let usr_token1 = token.to_string();
+        println!("Your username: {}", usr_token1);
 
         if usr_token1.is_empty() {
             Outcome::Error((Status::Unauthorized, ()))
         } else {
             let session_user = UserSession {
-                user_token: usr_token1.parse::<i32>().unwrap(),
+                user_token: usr_token1,
             };
             Outcome::Success(session_user)
         }
