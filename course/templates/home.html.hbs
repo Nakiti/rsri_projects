@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Course Homepage</title>
+    <style>
+        .top-div {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 400px;
+        }
+        .form-input {
+            margin: 20px;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .pad {
+            padding: 5px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+<div class = "top-div">
+    <h1>User Login</h1>
+    <form method="post">
+        <div class = "pad"> <label for="username">Username: </label><input type="text" name="username" placeholder="Enter a username"/> </div>
+        <div class = "pad"> <label for="email">Email: </label><input type="text" name="email" placeholder="Enter your email"/> </div>
+        <span>
+            <input class ="form-input" type="submit" formaction="/api/register" value="Not Registered? Sign-up">
+            <input class ="form-input" type="submit" formaction="/api/login" value="Login">
+        </span>
+    </form>
+  </div>  
+</body>
+</html>

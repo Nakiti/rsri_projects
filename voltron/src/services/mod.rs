@@ -8,6 +8,7 @@ use rocket::{execute, get, post };
 use crate::models::{self, PasswordReset, PasswordResetDto, UserSession, User, UserDto, Group, GroupDto, Class, ClassDto, Enrollment, EnrollmentDto};
 use crate::models::{EnrollmentRequestDto, EnrollUserDto};
 use crate::schema::{self, password_resets, users, groups, classes, enrollments};
+use std::alloc::System;
 use std::env;
 use rocket::form::Form;
 use rocket::http::CookieJar;
@@ -41,21 +42,8 @@ pub fn sign_in(jar: &CookieJar<'_>, user: Json<UserLogin>) -> Json<User> {
         .load::<User>(connection)
         .expect("Error");
 
-    // need to fix this
-    // need to get User object from Vec<User>
-    // let temp = current_user[0].clone();
-    jar.add(("user-id", current_user[0].clone().user_id.to_string()));
 
-    // let current_user_object: User = User {
-    //     user_id: temp.user_id.to_string(),
-    //     email_address: temp.email_address.to_string(),
-    //     first_name: temp.first_name.to_string(),
-    //     last_name: temp.last_name.to_string(),
-    //     theme: temp.theme.to_string(),
-    //     key_binds: temp.key_binds.to_string(),
-    //     admin: temp.admin.to_string(),
-    //     password: temp.password.to_string()
-    // };
+    jar.add(("user_id", current_user[0].clone().user_id.to_string()));
 
     return Json(current_user[0].clone())
 }
@@ -113,31 +101,34 @@ pub struct PasswordResetForm {
     code: String
 }
 
+// can update this to use cookies instead 
 // post "/api/resetpass"      resetPass
 #[post("/resetpass", format="json", data="<password_reset>")]
-pub fn reset_password(user_session: UserSession, password_reset: Json<PasswordResetForm>) -> Json<String> {
+pub fn reset_password(password_reset: Json<PasswordResetForm>) -> Json<String> {
     use self::schema::password_resets::code;
     use self::schema::users::dsl::*;
     use self::schema::password_resets::dsl::*;
     use crate::schema::password_resets::valid;
+    use self::schema::users::email_address;
 
     let reset_code = password_reset.code.to_string();
     let new_password = password_reset.new_password.to_string();
+    let user_email = password_reset.email.to_string();
 
     let connection = &mut establish_connection_pg();
 
     let is_code_valid = self::schema::password_resets::dsl::password_resets
-        .filter(code.eq(&reset_code).and(valid.eq(true)))
+        .filter(code.eq(&reset_code))
         .load::<PasswordReset>(connection)
         .expect("Error retrieving");
 
     if is_code_valid.is_empty() {
         return Json("code is invalid".to_string())
     } else {
-        let current_user_id = user_session.user_token;
+        // let current_user_id = user_session.user_token;
 
         diesel::update(users)
-            .filter(user_id.eq(current_user_id))
+            .filter(email_address.eq(user_email))
             .set(password.eq(new_password))
             .execute(connection)
             .expect("Error Updating");

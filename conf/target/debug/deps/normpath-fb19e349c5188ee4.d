@@ -1,0 +1,10 @@
+C:\Users\nakit\OneDrive\Documents\Coding\rsri_projects\conf\target\debug\deps\libnormpath-fb19e349c5188ee4.rmeta: C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\normpath-1.2.0\src\lib.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\normpath-1.2.0\src\base.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\normpath-1.2.0\src\cmp.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\normpath-1.2.0\src\error.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\normpath-1.2.0\src\windows\mod.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\normpath-1.2.0\src\windows\normalize.rs
+
+C:\Users\nakit\OneDrive\Documents\Coding\rsri_projects\conf\target\debug\deps\normpath-fb19e349c5188ee4.d: C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\normpath-1.2.0\src\lib.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\normpath-1.2.0\src\base.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\normpath-1.2.0\src\cmp.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\normpath-1.2.0\src\error.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\normpath-1.2.0\src\windows\mod.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\normpath-1.2.0\src\windows\normalize.rs
+
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\normpath-1.2.0\src\lib.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\normpath-1.2.0\src\base.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\normpath-1.2.0\src\cmp.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\normpath-1.2.0\src\error.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\normpath-1.2.0\src\windows\mod.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\normpath-1.2.0\src\windows\normalize.rs:

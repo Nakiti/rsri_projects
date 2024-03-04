@@ -19,6 +19,22 @@ pub struct User {
     pub level: String,
     pub password: String
 }
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
+#[diesel(table_name = users)]
+pub struct UserDto {
+    pub username: String,
+    pub name: String,
+    pub email: String,
+    pub affiliation: String,
+    pub level: String,
+    pub password: String
+}
+
+#[derive(Serialize, Deserialize, FromForm, Clone)]
+pub struct UserLogin {
+    pub username: String,
+    pub password: String
+}
 
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, ValidGrouping)]
 #[diesel(table_name = papers)]
@@ -39,6 +55,12 @@ pub struct PaperDto {
     pub accepted: bool
 }
 
+#[derive(Serialize, Deserialize, FromForm)]
+pub struct NewPaper {
+    pub title: String,
+    pub abstract_: String,
+}
+
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
 #[diesel(table_name = assignment_reviews)]
 pub struct AssignmentReview {
@@ -51,8 +73,8 @@ pub struct AssignmentReview {
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
 #[diesel(table_name = assignment_reviews)]
 pub struct AssignmentReviewDto {
-    pub paperid: i32,
     pub userid: i32,
+    pub paperid: i32,
     pub assign_type: String
 }
 
@@ -60,6 +82,13 @@ pub struct AssignmentReviewDto {
 #[diesel(table_name = paper_coauthors)]
 pub struct PaperCouthor {
     pub paper_coauthor_id: i32,
+    pub paperid: i32,
+    pub author: String
+}
+
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
+#[diesel(table_name = paper_coauthors)]
+pub struct PaperCouthorDto {
     pub paperid: i32,
     pub author: String
 }
@@ -73,6 +102,18 @@ pub struct Review {
     pub content: String,
     pub score: i32
 }
+
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
+#[diesel(table_name = reviews)]
+pub struct ReviewEdit {
+    pub reviewid: i32,
+    pub paperid: i32,
+    pub userid: i32,
+    pub content: String,
+    pub score: i32
+}
+
+
 
 pub struct UserSession {
     pub user_token: i32

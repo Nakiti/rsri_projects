@@ -11,3 +11,9 @@ diesel = { version = "2.0.0", features = ["postgres", "r2d2"] }
 dotenvy = "0.15"
 serde = "1.0.152"
 rocket_contrib = "0.4.4"
+tera = "1.0"
+
+
+[dependencies.rocket_dyn_templates]
+version = "0.1.0"
+features = ["handlebars", "tera"]

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en-US">
+    <head>
+        <title>Storm Conference Manager</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        <div style="text-align: center;">
+            {{#each paper}}
+
+                <form action="/paper/{{ this.paperid }}/edit" method="POST">
+                <label for="title">Title: </label>
+                <br/>
+                <textarea id="title" name="title" rows="2" cols="80">{{this.title}}</textarea>
+                <br/>
+                <br/>
+                <label for="abstract">Abstract: </label>
+                <br/>
+                <textarea id="abstract_" name="abstract_" rows="20" cols="80">{{this.abstract_}}</textarea>
+                <br/>
+                <br/>
+                <input type="submit" value="Save">
+                </form>
+
+            {{/each}}
+
+        </div>
+    </body>
+</html>

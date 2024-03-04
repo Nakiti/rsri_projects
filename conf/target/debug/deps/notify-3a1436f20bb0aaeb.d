@@ -1,0 +1,11 @@
+C:\Users\nakit\OneDrive\Documents\Coding\rsri_projects\conf\target\debug\deps\libnotify-3a1436f20bb0aaeb.rmeta: C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\notify-6.1.1\src\lib.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\notify-6.1.1\src\windows.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\notify-6.1.1\src\event.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\notify-6.1.1\src\null.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\notify-6.1.1\src\poll.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\notify-6.1.1\src\config.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\notify-6.1.1\src\error.rs
+
+C:\Users\nakit\OneDrive\Documents\Coding\rsri_projects\conf\target\debug\deps\notify-3a1436f20bb0aaeb.d: C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\notify-6.1.1\src\lib.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\notify-6.1.1\src\windows.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\notify-6.1.1\src\event.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\notify-6.1.1\src\null.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\notify-6.1.1\src\poll.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\notify-6.1.1\src\config.rs C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\notify-6.1.1\src\error.rs
+
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\notify-6.1.1\src\lib.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\notify-6.1.1\src\windows.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\notify-6.1.1\src\event.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\notify-6.1.1\src\null.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\notify-6.1.1\src\poll.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\notify-6.1.1\src\config.rs:
+C:\Program\ Files\Cargo\registry\src\index.crates.io-6f17d22bba15001f\notify-6.1.1\src\error.rs:

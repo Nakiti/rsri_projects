@@ -108,8 +108,6 @@ pub struct EnrollUserDto {
     pub group_id: i32
 }
 
-
-
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm)]
 #[diesel(table_name = password_resets)]
 pub struct PasswordReset {

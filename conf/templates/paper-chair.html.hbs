@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en-US">
+    <head>
+        <title>Storm Conference Manager</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+
+        <div style="text-align: center;">
+        {{#each paper}}
+
+            <h1>{{this.title}}</h1>
+
+            <p>{{this.abstract_}}</p>
+        {{/each}}
+
+            <p>Authors:</p>
+            {{#each authors}}
+            <div>{{this.author}}</div>
+            {{/each}}
+
+            <form action="/assignReview" method="POST">
+                <select name="userid">
+                    {{#each paper_chairs}}
+                    <option value={{this.userid}}>{{this.name}}</option>
+                    {{/each}}
+
+                </select>
+                {{#each paper}}
+                <input  name="paperid" type="hidden" value={{this.paperid}} />
+                {{/each}}
+                <input type="hidden" name="assign_type" value="high priority" />
+                <input type="submit" value="Assign"/>
+            </form>
+
+            <h1>Reviewers</h1>
+                {{#each review_assignments}}
+                <span>{{this.userid}}</span>
+                {{/each}}
+        </div>
+    </body>
+</html>

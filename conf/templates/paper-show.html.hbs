@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en-US">
+    <head>
+        <title>Storm Conference Manager</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        <div style="text-align: center;">
+            {{#each paper}}
+            <h1>{{this.title}}</h1>
+
+            <p>{{this.abstract_}}</p>
+            <a href="/paper/{{this.paperid}}/edit">Edit</a>
+            {{/each}}
+
+            {{#each authors}}
+            <div>{{this.author}}</div>
+            {{/each}}
+            
+            <h1>Reviews</h1>
+                {{#each reviews}}
+                 <div>{{this.score}}</div>
+                 <div>{{this.content}}</div>
+                {{/each}}
+        </div>
+    </body>
+</html>
