@@ -6,13 +6,14 @@ use dotenvy::dotenv;
 use rocket::serde::{json::Value, json, json::Json, Deserialize, Serialize,json::from_value,json::to_string};
 use rocket::{execute, get, post };
 use crate::models::{self, UserSession, User, UserDto, Course, CourseDto, CourseInstructor, CourseInstructorDto, Enrollment, 
-    EnrollmentDto, Assignment, AssignmentDto, Submission, SubmissionDto};
+    EnrollmentDto, Assignment, AssignmentDto, Submission, SubmissionDto, UserLogin, EnrolledCourses};
 //use crate::models::{EnrollmentRequestDto, EnrollUserDto};
 use crate::schema::{self, users, assignments, submissions, courses, enrollments, course_instructors};
 use std::env;
 use rocket::form::Form;
 use rocket::http::CookieJar;
 use rocket::FromForm;
+use rocket_dyn_templates::{context, Template};
 
 pub fn establish_connection_pg() -> PgConnection {
     dotenv().ok();
@@ -21,26 +22,37 @@ pub fn establish_connection_pg() -> PgConnection {
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
 
+//User home page
+#[get("/home")]
+pub fn home() -> Template {
+    Template::render("home",  context!{})
+}
+
 //add return
-#[post("/login", format="json", data="<user>")]
-pub fn login(jar: &CookieJar<'_>, user: Json<UserDto>) {
+#[post("/login", format="form", data="<user>")]
+pub fn login(jar: &CookieJar<'_>, user: Form<UserLogin>) -> Template {
     use self::schema::users::dsl::*;
 
     let connection = &mut establish_connection_pg();
 
     let is_user = self::schema::users::dsl::users
-        .filter(username.eq(user.username.to_string()).and(email.eq(user.email.to_string())).and(name.eq(user.name.to_string())))
+        .filter(username.eq(user.username.to_string()).and(email.eq(user.email.to_string())))
         .load::<User>(connection)
         .expect("Error loading users");
 
-    if is_user.is_empty() {
-        //
+    if (is_user.is_empty()) {
+        Template::render("users", context! {})
     } else {
         let session_id = is_user[0].clone().username.to_string();
         jar.add(("username", session_id));
-    }
 
-    //call view_courses
+        let user_session = UserSession {
+            user_token: is_user[0].clone().username.to_string()
+        };
+
+        //view courses will generate template
+        view_courses(user_session)
+    }
 }
 
 //need to decide between json or form data
@@ -218,7 +230,7 @@ pub fn view_courses_test(user_session: UserSession) -> Json<Vec<(CourseInstructo
 //to be created- final version of above method
 //it will return template probably, return different info based on student/instructor
 #[get("/view_courses")]
-pub fn view_courses(user_session: UserSession) {
+pub fn view_courses(user_session: UserSession) -> Template {
     use self::schema::enrollments::dsl::*;
 
     let connection: &mut PgConnection = &mut establish_connection_pg();
@@ -230,21 +242,35 @@ pub fn view_courses(user_session: UserSession) {
      
     //two cases depending on whether user is student or teacher
     if (current_user.role == "student") {
-        //get enrollments + joined course table  ---> return template within if statement
-        let enrolled_courses = get_enrollments(current_user.user_id);    
-        //get course objects using join table    
+        //get enrollments + joined course table 
+        let enrolled_courses = get_enrollments(current_user.user_id);   
+
+        let (enrollment_data, course_data): (Vec<_>, Vec<_>) = enrolled_courses.into_iter().unzip(); 
+
+        //return template within if statement
+        Template::render("courses", context!{courses: &course_data, enrollments: &enrollment_data})
+
     }
     else if (current_user.role == "instructor") {
         //get course_instructor objects where user_id = instructor_id
         let instructor_courses = get_instructor_courses(current_user.user_id);
-    }
 
-    //return template
+        let (instructor_course_data, course_data): (Vec<_>, Vec<_>) = instructor_courses.into_iter().unzip(); 
+
+        //instructor template should display teacher's courses + have a view_assignments and view_students button
+        Template::render("courses", context!{courses: &course_data})
+    }
+    else {
+        Template::render("courses", {})
+    }
 
 }
 
 
-//view assignments from all courses (+ specific course) for user
+//view assignments from specific selected course - take course id from html button press
+
+
+//view_assignments from all courses for user (to-do list maybe?)
 
 //view submissions for user (and for instructors), both all and for specific courses    
 
@@ -284,6 +310,7 @@ pub fn get_enrollments(current_user_id: i32) -> Vec<(Enrollment, Course)> {
 }
 
 //get instructor courses
+//might not need to join with Course info, just return courses
 pub fn get_instructor_courses(current_user_id: i32) -> Vec<(CourseInstructor, Course)> {
     use self::schema::course_instructors::instructor_id;
 

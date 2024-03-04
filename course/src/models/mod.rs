@@ -20,6 +20,14 @@ pub struct User {
 //can remove any variables that dont need to be inputted to create a user
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone, Selectable)]
 #[diesel(table_name = users)]
+pub struct UserLogin {
+    pub username: String,
+    pub email: String,
+}
+
+//can remove any variables that dont need to be inputted to create a user
+#[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone, Selectable)]
+#[diesel(table_name = users)]
 pub struct UserDto {
     pub username: String,
     pub email: String,
@@ -72,6 +80,17 @@ pub struct EnrollmentDto {
     pub course_id: i32,
     pub grade: String
 }
+
+//make model for combining grade from enrollment + course data (students) + DELETE IF NOT NEEDED
+#[derive(Serialize, Deserialize, FromForm)]
+pub struct EnrolledCourses {
+    pub student_id: i32,
+    pub course_id: i32,
+    pub grade: String,
+    pub name: String
+}
+
+
 
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone, Selectable)]
 #[diesel(belongs_to(Course))]
