@@ -87,7 +87,7 @@
         <div>
             <tr>
             <td>{{ this.name }}</td>
-            <form action="/api/view_assignments" method="get">
+            <form action="/api/view_assignments/{{this.course_id}}" method="get">
                 <td> <button type="submit">View Assignments</button></td>
             </form>
             </tr>

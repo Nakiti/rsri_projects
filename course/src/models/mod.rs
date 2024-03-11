@@ -82,7 +82,7 @@ pub struct EnrollmentDto {
 }
 
 //make model for combining grade from enrollment + course data (students) + DELETE IF NOT NEEDED
-#[derive(Serialize, Deserialize, FromForm)]
+#[derive(Serialize, Deserialize, FromForm, Queryable)]
 pub struct EnrolledCourses {
     pub student_id: i32,
     pub course_id: i32,

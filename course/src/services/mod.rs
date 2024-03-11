@@ -131,7 +131,7 @@ pub fn create_course_instructor(course_instructor: Json<CourseInstructorDto>, us
 }
 
 //create enrollment
-#[post("/enrollment", format="json", data = "<enrollment>")]
+#[post("/create_enrollment", format="json", data = "<enrollment>")]
 pub fn create_enrollment(enrollment: Json<EnrollmentDto>, user_session: UserSession) {
     use self::schema::enrollments::dsl::*;
 
@@ -157,7 +157,7 @@ pub fn create_enrollment(enrollment: Json<EnrollmentDto>, user_session: UserSess
 }
 
 //create assignment
-#[post("/assignment", format="json", data = "<assignment>")]
+#[post("/create_assignment", format="json", data = "<assignment>")]
 pub fn create_assignment(assignment: Json<AssignmentDto>, user_session: UserSession) {
     use self::schema::assignments::dsl::*;
 
@@ -186,7 +186,7 @@ pub fn create_assignment(assignment: Json<AssignmentDto>, user_session: UserSess
 }
 
 //create submission
-#[post("/submission", format="json", data = "<submission>")]
+#[post("/create_submission", format="json", data = "<submission>")]
 pub fn create_submission(submission: Json<SubmissionDto>, user_session: UserSession) {
     use self::schema::submissions::dsl::*;
 
@@ -231,7 +231,7 @@ pub fn view_courses_test(user_session: UserSession) -> Json<Vec<(CourseInstructo
 //it will return template probably, return different info based on student/instructor
 #[get("/view_courses")]
 pub fn view_courses(user_session: UserSession) -> Template {
-    use self::schema::enrollments::dsl::*;
+    use self::schema::assignments::dsl::*;
 
     let connection: &mut PgConnection = &mut establish_connection_pg();
 
@@ -247,8 +247,10 @@ pub fn view_courses(user_session: UserSession) -> Template {
 
         let (enrollment_data, course_data): (Vec<_>, Vec<_>) = enrolled_courses.into_iter().unzip(); 
 
+        //add iteration to combine data into single EnrolledCourse object
+
         //return template within if statement
-        Template::render("courses", context!{courses: &course_data, enrollments: &enrollment_data})
+        Template::render("courses", context!{courses: &course_data, data: &enrollment_data})
 
     }
     else if (current_user.role == "instructor") {
@@ -258,7 +260,7 @@ pub fn view_courses(user_session: UserSession) -> Template {
         let (instructor_course_data, course_data): (Vec<_>, Vec<_>) = instructor_courses.into_iter().unzip(); 
 
         //instructor template should display teacher's courses + have a view_assignments and view_students button
-        Template::render("courses", context!{courses: &course_data})
+        Template::render("courses", context!{courses: &course_data, data: &instructor_course_data})
     }
     else {
         Template::render("courses", {})
@@ -269,6 +271,31 @@ pub fn view_courses(user_session: UserSession) -> Template {
 
 //view assignments from specific selected course - take course id from html button press
 
+//to be created- final version of above method
+//it will return template probably, return different info based on student/instructor
+#[get("/view_assignments/<input_course_id>")]
+pub fn view_assignments(input_course_id: i32, user_session: UserSession) -> Template {
+    use self::schema::enrollments::dsl::*;
+
+    let connection: &mut PgConnection = &mut establish_connection_pg();
+
+    let user_token = user_session.user_token;
+
+    let current_user = get_user(user_token.to_string());
+     
+     //maybe provide extra info depending on whether user is student/teacher
+     //like course info, grades, etc
+    
+    //generic so no if statement needed
+    let assignments = get_assignments(input_course_id);   
+
+        //add iteration to combine data into single EnrolledCourse object
+
+    //return template within if statement
+    Template::render("assignments", context!{assignments: &assignments, user: &current_user})
+
+
+}
 
 //view_assignments from all courses for user (to-do list maybe?)
 
@@ -326,6 +353,20 @@ pub fn get_instructor_courses(current_user_id: i32) -> Vec<(CourseInstructor, Co
     return instructor_courses
 }
 
+//get courses
+pub fn get_assignments(input_course_id: i32) -> Vec<Assignment>{
+    use self::schema::assignments;
+    use crate::schema::assignments::course_id;
+
+    let connection = &mut establish_connection_pg();
+
+    let assignments = self::schema::assignments::dsl::assignments
+        .filter(course_id.eq(course_id))
+        .load::<Assignment>(connection)
+        .expect("Error loading assignments");
+
+    return assignments;
+}
 
 
 
