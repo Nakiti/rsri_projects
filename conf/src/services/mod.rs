@@ -36,7 +36,7 @@ pub fn login(jar: &CookieJar<'_>, user: Form<UserLogin>) -> Template {
     } else {
         let session_id = is_user[0].clone().userid.to_string();
         jar.add(("user_id", session_id));
-        Template::render("profile", context! {is_user})
+        Template::render("profile", context! {user: is_user})
     }
 }
 
