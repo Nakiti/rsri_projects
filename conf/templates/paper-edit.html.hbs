@@ -4,12 +4,20 @@
         <title>Storm Conference Manager</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <style>
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+            }
+        </style>
     </head>
     <body>
         <div style="text-align: center;">
             {{#each paper}}
 
                 <form action="/paper/{{ this.paperid }}/edit" method="POST">
+                <h2>Edit Paper:</h2>
+
                 <label for="title">Title: </label>
                 <br/>
                 <textarea id="title" name="title" rows="2" cols="80">{{this.title}}</textarea>
@@ -22,7 +30,8 @@
                 <br/>
                 <input type="submit" value="Save">
                 </form>
-
+            {{else}}
+                <div>current user id is not equal to paper author</div>
             {{/each}}
 
         </div>

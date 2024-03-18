@@ -4,6 +4,67 @@
         <title>Storm Conference Manager</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .content {
+                margin-top: 40px;
+            }
+
+            .authors {
+                display: flex;
+                width: 100%;
+                flex-direction: row;
+                align-items: center;
+                align-self: center;
+                justify-self: center;
+                text-align: center;
+            }
+
+            .author-name {
+                padding: 10px;
+                font-weight: none;
+            }
+
+            .input {
+                width: 100px;
+                height: 25px;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="content" style="text-align: center;">
+        {{#each paper}}
+
+            <h1 class="title">Title: {{this.title}}</h1>
+
+            <p class="abstract">Abstract: {{this.abstract_}}</p>
+        {{else}}
+        <h3>User level is not chair</h3>
+        {{/each}}
+
+            <h3 style="margin-top: 50px; margin-bottom: 0px">Paper Authors:</h3>
+            <div class="authors">
+
+            {{#each authors}}
+                <p class="author-name">{{this.author}}</p>
+                <p>|</p>
+            {{/each}}
+            </div>
+
+
+            <form action="/assignReview" method="POST">
+            <h4>Assign Reviews to Paper Chairs:</h4>
+                <select name="userid" class="dropdown input">
+
     </head>
     <body>
 
@@ -22,6 +83,7 @@
 
             <form action="/assignReview" method="POST">
                 <select name="userid">
+
                     {{#each paper_chairs}}
                     <option value={{this.userid}}>{{this.name}}</option>
                     {{/each}}
@@ -31,6 +93,19 @@
                 <input  name="paperid" type="hidden" value={{this.paperid}} />
                 {{/each}}
                 <input type="hidden" name="assign_type" value="high priority" />
+
+                <input type="submit" class="submit input" value="Assign"/>
+            </form>
+
+            <h4>Reviewers</h4:>
+            <div class="authors">
+                {{#each review_assignments}}
+                <p class="author-name">{{this.userid}}</p>
+                <p>|</p>
+
+                {{/each}}
+            </div>
+
                 <input type="submit" value="Assign"/>
             </form>
 
@@ -38,6 +113,7 @@
                 {{#each review_assignments}}
                 <span>{{this.userid}}</span>
                 {{/each}}
+
         </div>
     </body>
 </html>

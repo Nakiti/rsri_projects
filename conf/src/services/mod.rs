@@ -19,8 +19,9 @@ pub fn establish_connection_pg() -> PgConnection {
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
 
+
 #[post("/login", format="form", data="<user>")]
-pub fn login(jar: &CookieJar<'_>, user: Form<UserLogin>) {
+pub fn login(jar: &CookieJar<'_>, user: Form<UserLogin>) -> Template {
     let user_username = user.username.to_string();
     let user_password = user.password.to_string();
     let connection = &mut establish_connection_pg();
@@ -31,10 +32,11 @@ pub fn login(jar: &CookieJar<'_>, user: Form<UserLogin>) {
         .expect("Error loading users");
 
     if is_user.is_empty() {
-
+        Template::render("login", context! {})
     } else {
         let session_id = is_user[0].clone().userid.to_string();
         jar.add(("user_id", session_id));
+        Template::render("profile", context! {is_user})
     }
 }
 
@@ -68,6 +70,19 @@ pub fn register(user: Form<UserDto>) {
 pub fn get_register_page() -> Template {
     Template::render("register", context! {})
 }
+
+#[post("/logout")]
+pub fn logout(jar: &CookieJar<'_>) -> Template {
+    jar.remove("user_id"); //removes cookies
+
+    Template::render("login", context! {})
+}
+
+#[get("/logout")] 
+pub fn get_logout_page() -> Template {
+    Template::render("logout", context! {})
+}
+
 
 #[get("/")]
 pub fn get_user(user_session: UserSession) -> Template {
@@ -147,6 +162,7 @@ pub fn show_paper(paper_id: i32, user_session: UserSession) -> Template {
 
 
 #[get("/paper/<paper_id>/edit")]
+pub fn get_paper_edit(paper_id: i32, user_session: UserSession) -> Template {
 pub fn get_paper_edit(paper_id: i32) -> Template {
     use self::schema::papers::paperid;
 
@@ -156,6 +172,13 @@ pub fn get_paper_edit(paper_id: i32) -> Template {
         .filter(paperid.eq(paper_id))
         .load::<Paper>(connection)
         .expect("Error loading posts");
+
+    if user_session.user_token == paper[0].author {
+        Template::render("paper-edit", context! {paper})
+    } else {
+        Template::render("paper-edit", context! {})
+    }
+}
 
     Template::render("paper-edit", context! {paper})
 }
@@ -309,7 +332,6 @@ pub fn edit_review(paper_id: i32, user_session: UserSession, review: Form<Review
     } 
     
     Template::render("paper-edit", context!{this_review})
-
 }
 
 #[get("/index/<option>")]
