@@ -163,7 +163,6 @@ pub fn show_paper(paper_id: i32, user_session: UserSession) -> Template {
 
 #[get("/paper/<paper_id>/edit")]
 pub fn get_paper_edit(paper_id: i32, user_session: UserSession) -> Template {
-pub fn get_paper_edit(paper_id: i32) -> Template {
     use self::schema::papers::paperid;
 
     let connection = &mut establish_connection_pg();
@@ -180,8 +179,6 @@ pub fn get_paper_edit(paper_id: i32) -> Template {
     }
 }
 
-    Template::render("paper-edit", context! {paper})
-}
 
 #[post("/paper/<paper_id>/edit", format="form", data="<paper>")]
 pub fn edit_paper(paper_id: i32, paper: Form<PaperDto>) {
