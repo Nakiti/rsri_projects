@@ -21,7 +21,9 @@ fn rocket() -> _ {
             services::create_assignment,
             services::create_submission,
             services::view_courses,
-            services::view_assignments
+            services::view_assignments,
+            services::view_submissions,
+            services::view_submissions_content
         ])  
         .attach(Template::fairing())
 }
