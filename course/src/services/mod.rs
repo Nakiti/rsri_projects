@@ -207,6 +207,7 @@ pub fn create_submission(submission: Json<SubmissionDto>, user_session: UserSess
 }
 
 
+//OLD, KEEPING JUST FOR REFERENCE
 //view courses for user (test using json)
 #[get("/view_courses_test")]
 pub fn view_courses_test(user_session: UserSession) -> Json<Vec<(CourseInstructor, Course)>> {
@@ -227,8 +228,8 @@ pub fn view_courses_test(user_session: UserSession) -> Json<Vec<(CourseInstructo
 
 }
 
-//to be created- final version of above method
-//it will return template probably, return different info based on student/instructor
+//final version of above method
+//Returns template and different course info based on if user is a student/instructor
 #[get("/view_courses")]
 pub fn view_courses(user_session: UserSession) -> Template {
     use self::schema::assignments::dsl::*;
@@ -270,13 +271,8 @@ pub fn view_courses(user_session: UserSession) -> Template {
 
 
 //view assignments from specific selected course - take course id from html button press
-
-//to be created- final version of above method
-//it will return template probably, return different info based on student/instructor
 #[get("/view_assignments/<input_course_id>")]
 pub fn view_assignments(input_course_id: i32, user_session: UserSession) -> Template {
-    use self::schema::enrollments::dsl::*;
-
     let connection: &mut PgConnection = &mut establish_connection_pg();
 
     let user_token = user_session.user_token;
@@ -299,7 +295,61 @@ pub fn view_assignments(input_course_id: i32, user_session: UserSession) -> Temp
 
 //view_assignments from all courses for user (to-do list maybe?)
 
-//view submissions for user (and for instructors), both all and for specific courses    
+
+//view submissions for a particular assignment
+#[get("/view_submissions/<input_assignment_id>")]
+pub fn view_submissions(input_assignment_id: i32, user_session: UserSession) -> Template {
+    use self::schema::submissions;
+    use crate::schema::submissions::assignment_id;
+    use crate::schema::submissions::author_id;
+
+    let connection: &mut PgConnection = &mut establish_connection_pg();
+
+    let user_token = user_session.user_token;
+
+    let current_user = get_user(user_token.to_string());
+
+    //if student, shows their submission | if instructor, show student submissions
+    //just a vector of submissions so this can be generic -- {{each submission}} in html
+    if (current_user.role == "student") {
+        let submissions = self::schema::submissions::dsl::submissions
+            .filter(assignment_id.eq(input_assignment_id).and(author_id.eq(current_user.user_id)))
+            .load::<Submission>(connection)
+            .expect("Error loading submissions");
+
+        Template::render("submissions", context!{submissions: &submissions})
+    }
+    else if (current_user.role == "instructor") {
+        let submissions = self::schema::submissions::dsl::submissions
+            .filter(assignment_id.eq(input_assignment_id))
+            .load::<Submission>(connection)
+            .expect("Error loading submissions");
+
+            Template::render("submissions", context!{submissions: &submissions})
+    }
+    else {
+        Template::render("courses", {})
+    }
+}
+
+//view submission content (NOT DONE)
+//assumes content is huge text block -- got to deal with file names/attachments later on
+//basically acts as a redirect to a new html page with only the content
+#[get("/view_submission_content/<input_submission_id>")]
+pub fn view_submissions_content(input_submission_id: i32) -> Template {
+    use self::schema::submissions;
+    use crate::schema::submissions::submission_id;
+    use crate::schema::submissions::author_id;
+
+    let connection: &mut PgConnection = &mut establish_connection_pg();   
+
+    let submissions = self::schema::submissions::dsl::submissions
+        .filter(submission_id.eq(input_submission_id))
+        .load::<Submission>(connection)
+        .expect("Error loading submissions");
+
+    Template::render("submissions_content", context!{submissions: &submissions})  
+}
 
 
 // Helper Functions
@@ -353,7 +403,7 @@ pub fn get_instructor_courses(current_user_id: i32) -> Vec<(CourseInstructor, Co
     return instructor_courses
 }
 
-//get courses
+//get assignments
 pub fn get_assignments(input_course_id: i32) -> Vec<Assignment>{
     use self::schema::assignments;
     use crate::schema::assignments::course_id;
@@ -361,13 +411,12 @@ pub fn get_assignments(input_course_id: i32) -> Vec<Assignment>{
     let connection = &mut establish_connection_pg();
 
     let assignments = self::schema::assignments::dsl::assignments
-        .filter(course_id.eq(course_id))
+        .filter(course_id.eq(input_course_id))
         .load::<Assignment>(connection)
         .expect("Error loading assignments");
 
     return assignments;
 }
-
 
 
 

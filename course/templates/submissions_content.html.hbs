@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Course Information</title>
+    <title>Submissions</title>
     <head>
         <style>
             body {
@@ -80,26 +80,21 @@
     <div class="user">
         <p>Current User: </p><p id="username"></p>
     </div>
-    <h2>Course Info and Assignments</h2>
-    <table>
-        <tr><th>Assignment</th><th>View Submission</th><th>Score</th></tr> 
-        {{#each assignments}}
-        <div>
-            <tr>
-            <td>{{ this.name }}</td>
-            <form action="/api/view_submissions/{{this.assignment_id}}" method="get">
-                <td> <button type="submit">View Submission</button></td>
-            </form>
-            </tr>
-        </div>
-        {{else}}
-        <p> No assignments</p>
-        {{/each}}
-    </table>
+
+    {{#each submissions}} 
+    <div>
+        <td>{{ this.content }}</td>
+    </div>
 
     <div class="buttons">
+        <form action="/api/view_submissions/{{this.assignment_id}}" method="get">
+            <td> <button type="submit">Go back</button></td>
+        </form>
+
         <form method="post" action="/api/logout"><input type="submit" value="Sign Out"/></form>
     </div>
+    {{/each}}
+
 </body>
 <script>
     let id = document.getElementById("username");
