@@ -8,7 +8,7 @@ use std::env;
 use rocket::http::CookieJar;
 use crate::models::{AssignmentReview, AssignmentReviewDto, NewPaper, Paper, PaperCouthor, PaperCouthorDto, PaperDto, Review, User, UserDto, UserLogin, UserSession};
 use crate::schema::users::{password, username};
-use crate::schema::{self};
+use crate::schema::{self, papers};
 use rocket::form::Form;
 use rocket_dyn_templates::{context, Template};
 
@@ -19,7 +19,7 @@ pub fn establish_connection_pg() -> PgConnection {
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
 
-
+// logs user in
 #[post("/login", format="form", data="<user>")]
 pub fn login(jar: &CookieJar<'_>, user: Form<UserLogin>) -> Template {
     let user_username = user.username.to_string();
@@ -40,11 +40,13 @@ pub fn login(jar: &CookieJar<'_>, user: Form<UserLogin>) -> Template {
     }
 }
 
+// displays login page
 #[get("/login")]
 pub fn get_login_page() -> Template {
     Template::render("login", context! {})
 }
 
+// creates new user
 #[post("/register", format="form", data="<user>")]
 pub fn register(user: Form<UserDto>) {
     use self::schema::users::dsl::*;
@@ -66,11 +68,13 @@ pub fn register(user: Form<UserDto>) {
         .expect("Error adding user");
 }
 
+// displays register page 
 #[get("/register")] 
 pub fn get_register_page() -> Template {
     Template::render("register", context! {})
 }
 
+// deletes cookies and logs user out
 #[post("/logout")]
 pub fn logout(jar: &CookieJar<'_>) -> Template {
     jar.remove("user_id"); //removes cookies
@@ -78,36 +82,36 @@ pub fn logout(jar: &CookieJar<'_>) -> Template {
     Template::render("login", context! {})
 }
 
+// displays logout page
 #[get("/logout")] 
 pub fn get_logout_page() -> Template {
     Template::render("logout", context! {})
 }
 
-
+// displays home page
 #[get("/")]
-pub fn get_user(user_session: UserSession) -> Template {
-    use self::schema::users::userid;
+pub fn home(user_session: UserSession) -> Template {
+    use self::schema::papers::author;
 
     let current_user = user_session.user_token;
     let connection = &mut establish_connection_pg();
 
-    if is_existing_user(current_user) {
-        let user = self::schema::users::dsl::users
-            .filter(userid.eq(current_user))
-            .load::<User>(connection)
-            .expect("Error loading user");
+    let papers = self::schema::papers::dsl::papers
+        .filter(author.eq(current_user))
+        .load::<Paper>(connection)
+        .expect("Error loading papers");
 
-        Template::render("profile", context! {user});
-    } 
-
-    Template::render("profile", context! {})
+    println!("{}", papers[0].title);
+    Template::render("home", context! {papers})
 }
 
+// displays create paper form
 #[get("/paper")]
 pub fn get_paper() -> Template {
     Template::render("paper-create", context!{}) 
 }
 
+// creates new paper
 #[post("/paper", format="form", data="<paper>")]
 pub fn create_paper(paper: Form<NewPaper>, user_session: UserSession) {
     use self::schema::papers::dsl::*;
@@ -128,6 +132,7 @@ pub fn create_paper(paper: Form<NewPaper>, user_session: UserSession) {
         .expect("Error inserting into database");
 }
 
+// displays paper
 #[get("/paper/<paper_id>")]
 pub fn show_paper(paper_id: i32, user_session: UserSession) -> Template {
     use self::schema::papers::paperid;
@@ -138,7 +143,7 @@ pub fn show_paper(paper_id: i32, user_session: UserSession) -> Template {
     let user_token = user_session.user_token;
     let user = retrieve_user(user_token);
 
-    if user[0].level == "pc" {
+    if user[0].level == "pc" || user[0].level == "chair" {
         let paper: Vec<Paper> = self::schema::papers::dsl::papers  
             .filter(paperid.eq(paper_id))
             .load::<Paper>(connection)
@@ -160,7 +165,7 @@ pub fn show_paper(paper_id: i32, user_session: UserSession) -> Template {
     }
 }
 
-
+// displays paper edit form
 #[get("/paper/<paper_id>/edit")]
 pub fn get_paper_edit(paper_id: i32, user_session: UserSession) -> Template {
     use self::schema::papers::paperid;
@@ -179,7 +184,7 @@ pub fn get_paper_edit(paper_id: i32, user_session: UserSession) -> Template {
     }
 }
 
-
+// edits paper
 #[post("/paper/<paper_id>/edit", format="form", data="<paper>")]
 pub fn edit_paper(paper_id: i32, paper: Form<PaperDto>) {
     use self::schema::papers::paperid;
@@ -194,6 +199,7 @@ pub fn edit_paper(paper_id: i32, paper: Form<PaperDto>) {
         .expect("Error updating paper");
 }
 
+// creates new review assignment
 #[post("/assignReview", format="form", data="<assignment>")]
 pub fn create_assignment_review(assignment: Form<AssignmentReviewDto>, user_session: UserSession) -> Template {
     use self::schema::assignment_reviews::dsl::*;
@@ -214,6 +220,23 @@ pub fn create_assignment_review(assignment: Form<AssignmentReviewDto>, user_sess
     show_paper_chair(assignment.paperid, user_session)
 }
 
+#[post("/updateAccepted", format="form", data="<paper>")]
+pub fn update_accepted(paper: Form<Paper>) {
+    use self::schema::papers::paperid;
+    use self::schema::papers::accepted;
+    use self::schema::papers::dsl::*;
+
+    let connection = &mut establish_connection_pg();
+
+
+    diesel::update(papers)
+        .filter(paperid.eq(paper.paperid))
+        .set(accepted.eq(true))
+        .execute(connection)
+        .expect("Error updating paper");
+}
+
+// displays paper from chair view
 #[get("/chair/paper/<paper_id>")]
 pub fn show_paper_chair(paper_id: i32, user_session: UserSession) -> Template {
     use self::schema::reviews::paperid as review_paperid;
@@ -260,6 +283,7 @@ pub fn show_paper_chair(paper_id: i32, user_session: UserSession) -> Template {
     }
 }
 
+// displays user profile
 #[get("/profile/<user_id>")] 
 pub fn get_user_profile(user_id: i32) -> Template {
     use self::schema::users::userid;
@@ -274,7 +298,7 @@ pub fn get_user_profile(user_id: i32) -> Template {
     Template::render("profile", context! {user})
 }
 
-
+// displays reviews for a paper
 #[get("/review/<paper_id>")]
 pub fn get_review(paper_id: i32) -> Template {
     use self::schema::reviews::paperid;
@@ -289,6 +313,7 @@ pub fn get_review(paper_id: i32) -> Template {
     Template::render("review-show", context! {reviews})
 }
 
+// displays edit form for a paper 
 #[get("/review/<paper_id>/edit")]
 pub fn show_edit_review(paper_id: i32, user_session: UserSession) -> Template {
     use self::schema::reviews::paperid;
@@ -304,6 +329,7 @@ pub fn show_edit_review(paper_id: i32, user_session: UserSession) -> Template {
     Template::render("paper-edit", context! {review})
 }
 
+// posts edit to review
 #[post("/review/<paper_id>/edit", format="form", data="<review>")]
 pub fn edit_review(paper_id: i32, user_session: UserSession, review: Form<Review> ) -> Template {
     use self::schema::reviews::reviewid;
@@ -331,8 +357,9 @@ pub fn edit_review(paper_id: i32, user_session: UserSession, review: Form<Review
     Template::render("paper-edit", context!{this_review})
 }
 
+// index of all papers
 #[get("/index/<option>")]
-pub fn get_paper_index(option: String, user_session: UserSession) -> Template {
+pub fn get_paper_index(option: &str, user_session: UserSession) -> Template {
     use self::schema::papers::accepted;
     use self::schema::papers::author;
 
@@ -363,6 +390,7 @@ pub fn get_paper_index(option: String, user_session: UserSession) -> Template {
     Template::render("paper-index", context! {papers})
 }
 
+// adds paper coauthor
 #[post("/paperCoauthor", format="form", data="<coauthor>")]
 pub fn create_paper_coauthor(coauthor: Form<PaperCouthorDto>) {
     use self::schema::paper_coauthors::dsl::*;
@@ -392,7 +420,6 @@ pub fn retrieve_user(user_id: i32) -> Vec<User> {
         .expect("Error loading user");
 
     return user
-
 }
 
 pub fn is_existing_user(user_id: i32) -> bool {

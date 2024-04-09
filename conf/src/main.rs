@@ -14,7 +14,6 @@ fn rocket() -> _ {
             services::get_login_page,
             services::register,
             services::get_register_page,
-            services::get_user,
             services::get_paper,
             services::create_paper,
             services::show_paper,
@@ -27,7 +26,8 @@ fn rocket() -> _ {
             services::get_paper_index,
             services::create_paper_coauthor,
             services::logout,
-            services::get_logout_page
+            services::get_logout_page,
+            services::home
         ])  
         .attach(Template::fairing())
 }

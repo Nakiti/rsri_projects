@@ -1,15 +1,59 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en-US">
-    <head>
-        <title>Storm Conference Manager</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-    </head>
-    <body>
-        {{#each user }}
-        <h1>{{name}}</h1>
-        <h2>{{affiliation}}</h2>
-            <span>{{email}}</span>
-        {{/each}}
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storm Conference Manager</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 90%;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1, h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        span {
+            color: #666;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #666;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    {{#each user }}
+        <h1>Name: {{name}}</h1>
+        <h2>Affiliation: {{affiliation}}</h2>
+        <span>Email: {{email}}</span>
+    {{else}}
+        <p>User not logged in</p>
+    {{/each}}
+</div>
+
+</body>
 </html>

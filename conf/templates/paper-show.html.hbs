@@ -1,28 +1,93 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en-US">
-    <head>
-        <title>Storm Conference Manager</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-    </head>
-    <body>
-        <div style="text-align: center;">
-            {{#each paper}}
-            <h1>{{this.title}}</h1>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storm Conference Manager</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-            <p>{{this.abstract_}}</p>
-            <a href="/paper/{{this.paperid}}/edit">Edit</a>
-            {{/each}}
+        .container {
+            max-width: 800px;
+            width: 90%;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
 
-            {{#each authors}}
-            <div>{{this.author}}</div>
-            {{/each}}
-            
-            <h1>Reviews</h1>
-                {{#each reviews}}
-                 <div>{{this.score}}</div>
-                 <div>{{this.content}}</div>
-                {{/each}}
-        </div>
-    </body>
+        h1, h2, h3 {
+            color: #333;
+        }
+
+        p {
+            color: #666;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .section {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .section-title {
+            margin-bottom: 15px;
+        }
+
+        .item {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    {{#each paper}}
+        <h1>Title: {{this.title}}</h1>
+        <p>Abstract: {{this.abstract_}}</p>
+        <a href="/paper/{{this.paperid}}/edit">Edit</a>
+    {{else}}
+        <h1>User level is not chair</h1>
+    {{/each}}
+
+    <div class="section">
+        <h2 class="section-title">Authors</h2>
+        {{#each authors}}
+            <div class="item">{{this.author}}</div>
+        {{/each}}
+    </div>
+    
+    <div class="section">
+        <h2 class="section-title">Reviews</h2>
+        {{#each reviews}}
+            <div class="item">
+                <h3>Review Score: {{this.score}}</h3>
+                <p>{{this.content}}</p>
+            </div>
+        {{/each}}
+    </div>
+</div>
+
+</body>
 </html>

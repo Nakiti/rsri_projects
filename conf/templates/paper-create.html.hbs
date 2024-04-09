@@ -1,31 +1,83 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en-US">
-    <head>
-        <title>Storm Conference Manager</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <style>
-            body {
-                font-family: Arial, Helvetica, sans-serif;
-            }
-        </style>
-    </head>
-    <body>
-        <div style="text-align: center;">
-            <form action="/paper" method="POST">
-                <h1>Create New Paper:</h1>
-                <label for="title">Title: </label>
-                <br/>
-                <textarea id="title" name="title" rows="2" cols="80"></textarea>
-                <br/>
-                <br/>
-                <label for="abstract_">Abstract: </label>
-                <br/>
-                <textarea id="abstract_" name="abstract_" rows="20" cols="80"></textarea>
-                <br/>
-                <br/>
-                <input type="submit" value="Create">
-            </form>
-        </div>
-    </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storm Conference Manager</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 90%;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            resize: vertical;
+        }
+
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <form action="/paper" method="POST">
+        <h1>Create New Paper</h1>
+        <label for="title">Title:</label>
+        <br>
+        <textarea id="title" name="title" rows="2" cols="80" required></textarea>
+        <br>
+        <label for="abstract_">Abstract:</label>
+        <br>
+        <textarea id="abstract_" name="abstract_" rows="10" cols="80" required></textarea>
+        <br>
+        <input type="submit" value="Create">
+    </form>
+</div>
+
+</body>
 </html>
