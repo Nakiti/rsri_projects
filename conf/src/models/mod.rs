@@ -7,7 +7,16 @@ use rocket::request::{FromRequest, Outcome};
 use rocket::Request;
 use rocket::http::Status;
 use rocket::FromForm;
+use diesel::associations::HasTable;
 
+
+impl HasTable for User {
+    type Table = crate::schema::users::table;
+
+    fn table() -> Self::Table {
+        crate::schema::users::table
+    }
+}
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
 #[diesel(table_name = users)]
 pub struct User {
@@ -30,12 +39,20 @@ pub struct UserDto {
     pub password: String
 }
 
+
 #[derive(Serialize, Deserialize, FromForm, Clone)]
 pub struct UserLogin {
     pub username: String,
     pub password: String
 }
 
+impl HasTable for Paper {
+    type Table = crate::schema::papers::table;
+
+    fn table() -> Self::Table {
+        crate::schema::papers::table
+    }
+}
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, ValidGrouping)]
 #[diesel(table_name = papers)]
 pub struct Paper {
@@ -61,6 +78,13 @@ pub struct NewPaper {
     pub abstract_: String,
 }
 
+impl HasTable for AssignmentReview {
+    type Table = crate::schema::assignment_reviews::table;
+
+    fn table() -> Self::Table {
+        crate::schema::assignment_reviews::table
+    }
+}
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
 #[diesel(table_name = assignment_reviews)]
 pub struct AssignmentReview {
@@ -78,6 +102,13 @@ pub struct AssignmentReviewDto {
     pub assign_type: String
 }
 
+impl HasTable for PaperCouthor {
+    type Table = crate::schema::paper_coauthors::table;
+
+    fn table() -> Self::Table {
+        crate::schema::paper_coauthors::table
+    }
+}
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
 #[diesel(table_name = paper_coauthors)]
 pub struct PaperCouthor {
@@ -93,6 +124,13 @@ pub struct PaperCouthorDto {
     pub author: String
 }
 
+impl HasTable for Review {
+    type Table = crate::schema::reviews::table;
+
+    fn table() -> Self::Table {
+        crate::schema::reviews::table
+    }
+}
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
 #[diesel(table_name = reviews)]
 pub struct Review {
