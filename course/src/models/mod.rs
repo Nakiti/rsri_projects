@@ -1,11 +1,20 @@
 use crate::schema::{users, courses, course_instructors, enrollments, assignments, submissions};
 
+use diesel::associations::HasTable;
 use diesel::prelude::*;
 use serde::{Serialize, Deserialize};
 use rocket::request::{FromRequest, Outcome};
 use rocket::Request;
 use rocket::http::Status;
 use rocket::FromForm;
+
+impl HasTable for User {
+    type Table = crate::schema::users::table;
+
+    fn table() -> Self::Table {
+        crate::schema::users::table
+    }
+}
 
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone, Selectable)]
 #[diesel(table_name = users)]
@@ -35,6 +44,14 @@ pub struct UserDto {
     pub role: String
 }
 
+impl HasTable for Course {
+    type Table = crate::schema::courses::table;
+
+    fn table() -> Self::Table {
+        crate::schema::courses::table
+    }
+}
+
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone, Selectable)]
 #[diesel(table_name = courses)]
 pub struct Course {
@@ -47,6 +64,14 @@ pub struct Course {
 #[diesel(table_name = courses)]
 pub struct CourseDto {
     pub name: String
+}
+
+impl HasTable for CourseInstructor {
+    type Table = crate::schema::course_instructors::table;
+
+    fn table() -> Self::Table {
+        crate::schema::course_instructors::table
+    }
 }
 
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone, Selectable)]
@@ -62,6 +87,14 @@ pub struct CourseInstructor {
 pub struct CourseInstructorDto {
     pub course_id: i32,
     pub instructor_id: i32
+}
+
+impl HasTable for Enrollment {
+    type Table = crate::schema::enrollments::table;
+
+    fn table() -> Self::Table {
+        crate::schema::enrollments::table
+    }
 }
 
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone, Selectable)]
@@ -90,7 +123,13 @@ pub struct EnrolledCourses {
     pub name: String
 }
 
+impl HasTable for Assignment {
+    type Table = crate::schema::assignments::table;
 
+    fn table() -> Self::Table {
+        crate::schema::assignments::table
+    }
+}
 
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone, Selectable)]
 #[diesel(belongs_to(Course))]
@@ -109,6 +148,14 @@ pub struct AssignmentDto {
     pub name: String,
     pub course_id: i32,
     pub description: String
+}
+
+impl HasTable for Submission {
+    type Table = crate::schema::submissions::table;
+
+    fn table() -> Self::Table {
+        crate::schema::submissions::table
+    }
 }
 
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone, Selectable)]
