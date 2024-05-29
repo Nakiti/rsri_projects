@@ -276,9 +276,9 @@ dependencies = [
 
 [[package]]
 name = "diesel"
-version = "2.1.4"
+version = "2.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "62c6fcf842f17f8c78ecf7c81d75c5ce84436b41ee07e03f490fbb5f5a8731d8"
+checksum = "ff236accb9a5069572099f0b350a92e9560e8e63a9b8d546162f4a5e03026bb2"
 dependencies = [
  "bitflags 2.4.2",
  "byteorder",
@@ -376,6 +376,24 @@ dependencies = [
  "libc",
  "redox_syscall",
  "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "flux-attrs"
+version = "0.1.0"
+source = "git+https://github.com/flux-rs/flux#0f3b2923ee41e734ed2b5b30f14f535a21770938"
+dependencies = [
+ "proc-macro2 1.0.78",
+ "quote 1.0.35",
+ "syn 2.0.48",
+]
+
+[[package]]
+name = "flux-rs"
+version = "0.1.0"
+source = "git+https://github.com/flux-rs/flux#0f3b2923ee41e734ed2b5b30f14f535a21770938"
+dependencies = [
+ "flux-attrs",
 ]
 
 [[package]]
@@ -1200,6 +1218,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "rdiesel"
+version = "0.1.0"
+source = "git+https://github.com/flux-rs/rdiesel.git#5da03947e2c291cd014156087e5b5891c425a03c"
+dependencies = [
+ "diesel",
+ "flux-rs",
+]
+
+[[package]]
 name = "redox_syscall"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1984,6 +2011,7 @@ version = "0.1.0"
 dependencies = [
  "diesel",
  "dotenvy",
+ "rdiesel",
  "rocket 0.5.0",
  "rocket_contrib",
  "serde",

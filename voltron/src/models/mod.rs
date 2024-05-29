@@ -6,7 +6,15 @@ use rocket::request::{FromRequest, Outcome};
 use rocket::Request;
 use rocket::http::Status;
 use rocket::FromForm;
+use diesel::associations::HasTable;
 
+impl HasTable for User {
+    type Table = crate::schema::users::table;
+
+    fn table() -> Self::Table {
+        crate::schema::users::table
+    }
+}
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
 #[diesel(table_name = users)]
 pub struct User {
@@ -33,6 +41,13 @@ pub struct UserDto {
     pub password: String
 }
 
+impl HasTable for Class {
+    type Table = crate::schema::classes::table;
+
+    fn table() -> Self::Table {
+        crate::schema::classes::table
+    }
+}
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm, Clone)]
 #[diesel(belongs_to(User))]
 #[diesel(table_name = classes)]
@@ -56,6 +71,13 @@ pub struct ClassDto {
     pub user_id: String
 }
 
+impl HasTable for Group {
+    type Table = crate::schema::groups::table;
+
+    fn table() -> Self::Table {
+        crate::schema::groups::table
+    }
+}
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm)]
 #[diesel(belongs_to(Class))]
 #[diesel(table_name = groups)]
@@ -75,6 +97,13 @@ pub struct GroupDto {
     pub class_id: i32
 }
 
+impl HasTable for Enrollment {
+    type Table = crate::schema::enrollments::table;
+
+    fn table() -> Self::Table {
+        crate::schema::enrollments::table
+    }
+}
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm)]
 #[diesel(table_name = enrollments)]
 pub struct Enrollment {
@@ -108,6 +137,13 @@ pub struct EnrollUserDto {
     pub group_id: i32
 }
 
+impl HasTable for PasswordReset {
+    type Table = crate::schema::password_resets::table;
+
+    fn table() -> Self::Table {
+        crate::schema::password_resets::table
+    }
+}
 #[derive(Queryable, Insertable, Serialize, Deserialize, FromForm)]
 #[diesel(table_name = password_resets)]
 pub struct PasswordReset {

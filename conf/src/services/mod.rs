@@ -1,7 +1,7 @@
 extern crate diesel;
 extern crate rocket;
 use diesel::pg::PgConnection;
-use diesel::{connection, prelude::*};
+// use diesel::{connection, prelude::*};
 use dotenvy::dotenv;
 use rocket::http::hyper::server::conn;
 use rocket::{get, post};
@@ -13,6 +13,8 @@ use crate::schema::{self, papers};
 use rocket::form::Form;
 use rocket_dyn_templates::{context, Template};
 use rdiesel::{select_list, update_where, Expr, Field};
+use diesel::{RunQueryDsl, Connection};
+
 
 
 pub fn establish_connection_pg() -> PgConnection {
@@ -32,9 +34,9 @@ pub fn login(jar: &CookieJar<'_>, user: Form<UserLogin>) -> Template {
     let user_password = user.password.to_string();
     let connection = &mut establish_connection_pg();
 
-    let q1 = rdiesel::Expr::eq(username, user_username);
-    let q2 = rdiesel::Expr::eq(password, user_password);
-    let q3 = rdiesel::Expr::and(q1, q2);
+    let q1 = username.eq(user_username);
+    let q2 = password.eq(user_password);
+    let q3 = q1.and(q2);
     let is_user = select_list(connection, q3).expect("Error retrieving user");
 
     // let is_user = self::schema::users::dsl::users
@@ -109,7 +111,7 @@ pub fn home(user_session: UserSession) -> Template {
     let current_user = user_session.user_token;
     let connection = &mut establish_connection_pg();
 
-    let q1 = rdiesel::Expr::eq(author, current_user);
+    let q1 = author.eq(current_user);
     let papers = select_list(connection, q1).expect("Error retrieving papers");
 
     // let papers = self::schema::papers::dsl::papers
@@ -163,13 +165,13 @@ pub fn show_paper(paper_id: i32, user_session: UserSession) -> Template {
     let user = retrieve_user(user_token);
 
     if user[0].level == "pc" || user[0].level == "chair" {
-        let paper_q1 = rdiesel::Expr::eq(paperid, paper_id);
+        let paper_q1 = paperid.eq(paper_id);
         let paper = select_list(connection, paper_q1).expect("Error retrieving papers");
     
-        let review_q1 = rdiesel::Expr::eq(review_paperid, paper_id);
+        let review_q1 = review_paperid.eq(paper_id);
         let reviews =  select_list(connection, review_q1).expect("Error retrieving reviews");
     
-        let authors_q1 = rdiesel::Expr::eq(coauthor_paperid, paper_id);
+        let authors_q1 = coauthor_paperid.eq(paper_id);
         let authors = select_list(connection, authors_q1).expect("Error retrieving authors");
 
         // let paper: Vec<Paper> = self::schema::papers::dsl::papers  
@@ -200,8 +202,8 @@ pub fn get_paper_edit(paper_id: i32, user_session: UserSession) -> Template {
 
     let connection = &mut establish_connection_pg();
 
-    let paper_q1 = rdiesel::Expr::eq(paperid, paper_id);
-    let paper = rdiesel::select_list(connection, paper_q1).expect("Error retrieving paper");
+    let paper_q1 = paperid.eq(paper_id);
+    let paper = select_list(connection, paper_q1).expect("Error retrieving paper");
 
     // let paper = self::schema::papers::dsl::papers
     //     .filter(paperid.eq(paper_id))
@@ -231,7 +233,7 @@ pub fn edit_paper(paper_id: i32, paper: Form<PaperDto>) {
 
     let connection = &mut establish_connection_pg();
 
-    let papers_q1 = rdiesel::Expr::eq(paperid, paper_id);
+    let papers_q1 = paperid.eq(paper_id);
     
     let update_ = update_where(
         connection, 
@@ -278,7 +280,7 @@ pub fn update_accepted(paper: Form<Paper>) {
 
     let connection = &mut establish_connection_pg();
 
-    let papers_q1 = rdiesel::Expr::eq(paperid, paper.paperid);
+    let papers_q1 = paperid.eq(paper.paperid);
     let update_ = update_where(connection, papers_q1, accepted.assign(true));
 
     // diesel::update(papers)
@@ -305,20 +307,20 @@ pub fn show_paper_chair(paper_id: i32, user_session: UserSession) -> Template {
     let user = retrieve_user(user_token);
 
     if user[0].level == "chair" {
-        let paper_q = rdiesel::Expr::eq(paperid, paper_id);
-        let paper = rdiesel::select_list(connection, paper_q).expect("Error retrieving papers");
+        let paper_q = paperid.eq(paper_id);
+        let paper = select_list(connection, paper_q).expect("Error retrieving papers");
 
-        let review_q = rdiesel::Expr::eq(review_paperid, paper_id);
-        let reviews = rdiesel::select_list(connection, review_q).expect("Error retrieving reviews");
+        let review_q = review_paperid.eq(paper_id);
+        let reviews = select_list(connection, review_q).expect("Error retrieving reviews");
         
-        let author_q = rdiesel::Expr::eq(coauthor_paperid, paper_id);
-        let authors = rdiesel::select_list(connection, author_q).expect("Error retrieving authors");
+        let author_q = coauthor_paperid.eq(paper_id);
+        let authors = select_list(connection, author_q).expect("Error retrieving authors");
 
-        let assignment_q = rdiesel::Expr::eq(assignment_paperid, paper_id);
+        let assignment_q = assignment_paperid.eq(paper_id);
         let review_assignments = rdiesel::select_list(connection, assignment_q).expect("Error retrieving assignments");
         
-        let chair_q  = rdiesel::Expr::eq(level, "pc".to_string());
-        let paper_chairs = rdiesel::select_list(connection, chair_q).expect("Error retrieving chairs");
+        let chair_q  = level.eq("pc".to_string());
+        let paper_chairs = select_list(connection, chair_q).expect("Error retrieving chairs");
         // let paper = self::schema::papers::dsl::papers  
         //     .filter(paperid.eq(paper_id))
         //     .load::<Paper>(connection)
@@ -358,8 +360,8 @@ pub fn get_user_profile(user_id: i32) -> Template {
 
     let connection = &mut establish_connection_pg();
 
-    let user_q = rdiesel::Expr::eq(userid, user_id);
-    let user = rdiesel::select_list(connection, user_q).expect("Error retriving user");
+    let user_q = userid.eq(user_id);
+    let user = select_list(connection, user_q).expect("Error retriving user");
 
     // let user = self::schema::users::dsl::users
     //     .filter(userid.eq(user_id))
@@ -376,8 +378,8 @@ pub fn get_review(paper_id: i32) -> Template {
 
     let connection = &mut establish_connection_pg();
 
-    let review_q = rdiesel::Expr::eq(paperid, paper_id);
-    let reviews = rdiesel::select_list(connection, review_q).expect("Error retrieving reviews");
+    let review_q = paperid.eq(paper_id);
+    let reviews = select_list(connection, review_q).expect("Error retrieving reviews");
 
     // let reviews = self::schema::reviews::dsl::reviews
     //     .filter(paperid.eq(paper_id))
@@ -396,11 +398,11 @@ pub fn show_edit_review(paper_id: i32, user_session: UserSession) -> Template {
 
     let connection = &mut establish_connection_pg();
 
-    let review_q1 = rdiesel::Expr::eq(paperid, paper_id);
-    let review_q2 = rdiesel::Expr::eq(userid, user_session.user_token);
-    let review_q3 = rdiesel::Expr::and(review_q1, review_q2);
+    let review_q1 = paperid.eq(paper_id);
+    let review_q2 = userid.eq(user_session.user_token);
+    let review_q3 = review_q1.and(review_q2);
 
-    let review = rdiesel::select_list(connection, review_q3).expect("Errpr retrieving reviews");
+    let review = select_list(connection, review_q3).expect("Errpr retrieving reviews");
 
     // let review = self::schema::reviews::dsl::reviews
     //     .filter(paperid.eq(paper_id).and(userid.eq(user_session.user_token)))
@@ -427,11 +429,11 @@ pub fn edit_review(paper_id: i32, user_session: UserSession, review: Form<Review
 
     let connection = &mut establish_connection_pg();
 
-    let review_q1 = rdiesel::Expr::eq(paperid, paper_id);
-    let review_q2 = rdiesel::Expr::eq(userid, user_session.user_token);
-    let review_q3 = rdiesel::Expr::and(review_q1, review_q2);
+    let review_q1 = paperid.eq(paper_id);
+    let review_q2 = userid.eq(user_session.user_token);
+    let review_q3 = review_q1.and(review_q2);
 
-    let this_review = rdiesel::select_list(connection, review_q3).expect("Errpr retrieving reviews");
+    let this_review = select_list(connection, review_q3).expect("Errpr retrieving reviews");
 
     // let this_review = self::schema::reviews::dsl::reviews
     //     .filter((paperid.eq(paper_id)).and(userid.eq(user_session.user_token)))
@@ -439,9 +441,9 @@ pub fn edit_review(paper_id: i32, user_session: UserSession, review: Form<Review
     //     .expect("Error retrieving review");
 
     if !this_review.is_empty() {
-        let update_q = rdiesel::Expr::eq(reviewid, this_review[0].reviewid);
+        let update_q = reviewid.eq(this_review[0].reviewid);
 
-        let update_ = update_where(connection, update_q, 
+        let _update = update_where(connection, update_q, 
             (content.assign(review.content.to_string()), score.assign(review.score)));
 
         // diesel::update(reviews)
@@ -467,16 +469,16 @@ pub fn get_paper_index(option: &str, user_session: UserSession) -> Template {
     let mut papers: Vec<Paper> = Vec::new(); 
 
     if option == "all" {
-        let papers_q = rdiesel::Expr::gt(paperid, 0);
-        papers = rdiesel::select_list(connection, papers_q).expect("Error retrieving");
+        let papers_q = paperid.gt(0);
+        papers = select_list(connection, papers_q).expect("Error retrieving");
 
         // papers = self::schema::papers::dsl::papers
         //     .load::<Paper>(connection)
         //     .expect("Error loading papers");
 
     } else if option == "accepted" {
-        let papers_q = rdiesel::Expr::eq(accepted, true);
-        papers = rdiesel::select_list(connection, papers_q).expect("Error retriving papers");
+        let papers_q = accepted.eq(true);
+        papers = select_list(connection, papers_q).expect("Error retriving papers");
 
         // papers = self::schema::papers::dsl::papers
         //     .filter(accepted.eq(true))
@@ -484,8 +486,8 @@ pub fn get_paper_index(option: &str, user_session: UserSession) -> Template {
         //     .expect("Error loading papers");
 
     } else if option == "current" {
-        let papers_q = rdiesel::Expr::eq(author, current_user);
-        papers = rdiesel::select_list(connection, papers_q).expect("Error retriving papers");
+        let papers_q = author.eq(current_user);
+        papers = select_list(connection, papers_q).expect("Error retriving papers");
 
         // papers = self::schema::papers::dsl::papers
         //     .filter(author.eq(current_user))
@@ -520,8 +522,8 @@ pub fn retrieve_user(user_id: i32) -> Vec<User> {
 
     let connection = &mut establish_connection_pg();
 
-    let user_q = rdiesel::Expr::eq(userid, user_id);
-    let user = rdiesel::select_list(connection, user_q).expect("Error retrieving user");
+    let user_q = userid.eq(user_id);
+    let user = select_list(connection, user_q).expect("Error retrieving user");
 
     // let user = self::schema::users::dsl::users
     //     .filter(userid.eq(user_id))
@@ -535,8 +537,8 @@ pub fn is_existing_user(user_id: i32) -> bool {
 
     let connection = &mut establish_connection_pg();
 
-    let user_q = rdiesel::Expr::eq(userid, user_id);
-    let user = rdiesel::select_list(connection, user_q).expect("Error retrieving user");
+    let user_q = userid.eq(user_id);
+    let user = select_list(connection, user_q).expect("Error retrieving user");
 
     // let user = self::schema::users::dsl::users
     //     .filter(userid.eq(user_id))

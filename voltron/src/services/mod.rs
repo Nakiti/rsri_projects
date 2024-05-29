@@ -1,7 +1,8 @@
 extern crate diesel;
 extern crate rocket;
 use diesel::pg::PgConnection;
-use diesel::prelude::*;
+use diesel::sql_types::Bool;
+// use diesel::prelude::*;
 use dotenvy::dotenv;
 use rocket::serde::{json::Value, json, json::Json, Deserialize, Serialize,json::from_value,json::to_string};
 use rocket::{execute, get, post };
@@ -13,6 +14,8 @@ use std::env;
 use rocket::form::Form;
 use rocket::http::CookieJar;
 use rocket::FromForm;
+use rdiesel::{select_list, update_where, Expr, Field};
+use diesel::{RunQueryDsl, Connection};
 
 pub fn establish_connection_pg() -> PgConnection {
     dotenv().ok();
@@ -27,6 +30,8 @@ pub struct UserLogin {
     pub user_password: String
 }
 
+impl rdiesel::Expr<User, String> for schema::users::email_address {}
+impl rdiesel::Expr<User, String> for schema::users::password {}
 // post "/api/signin"         signIn
 #[post("/signin", format="json", data="<user>")]
 pub fn sign_in(jar: &CookieJar<'_>, user: Json<UserLogin>) -> Json<User> {
@@ -37,10 +42,16 @@ pub fn sign_in(jar: &CookieJar<'_>, user: Json<UserLogin>) -> Json<User> {
     let user_password = user.user_password.to_string();
 
     let connection: &mut PgConnection = &mut establish_connection_pg();
-    let current_user = self::schema::users::dsl::users
-        .filter((email_address.eq(user_email_address)).and(password.eq(user_password)))
-        .load::<User>(connection)
-        .expect("Error");
+
+    let q1 = email_address.eq(user_email_address);
+    let q2 = password.eq(user_password);
+    let q3 = q1.and(q2);
+    let current_user = select_list(connection, q3).expect("Error loading user");
+
+    // let current_user = self::schema::users::dsl::users
+    //     .filter((email_address.eq(user_email_address)).and(password.eq(user_password)))
+    //     .load::<User>(connection)
+    //     .expect("Error");
 
 
     jar.add(("user_id", current_user[0].clone().user_id.to_string()));
@@ -70,10 +81,14 @@ pub fn create_reset(password_reset: Json<ResetForm>) -> Json<String> {
     let user_email = password_reset.email.to_string();
 
     let connection = &mut establish_connection_pg();
-    let is_user = self::schema::users::dsl::users
-        .filter(email_address.eq(&user_email))
-        .load::<User>(connection)
-        .expect("Error loading posts");
+
+    let q1 = email_address.eq(user_email);
+    let is_user = select_list(connection, q1).expect("Error loading user");
+
+    // let is_user = self::schema::users::dsl::users
+    //     .filter(email_address.eq(&user_email))
+    //     .load::<User>(connection)
+    //     .expect("Error loading posts");
 
     if is_user.is_empty() {
         return Json("User with given email address is not found".to_string())
@@ -101,6 +116,9 @@ pub struct PasswordResetForm {
     code: String
 }
 
+impl rdiesel::Expr<PasswordReset, String> for schema::password_resets::code {}
+impl rdiesel::Expr<PasswordReset, Bool> for schema::password_resets::valid {}
+
 // can update this to use cookies instead 
 // post "/api/resetpass"      resetPass
 #[post("/resetpass", format="json", data="<password_reset>")]
@@ -117,10 +135,13 @@ pub fn reset_password(password_reset: Json<PasswordResetForm>) -> Json<String> {
 
     let connection = &mut establish_connection_pg();
 
-    let is_code_valid = self::schema::password_resets::dsl::password_resets
-        .filter(code.eq(&reset_code))
-        .load::<PasswordReset>(connection)
-        .expect("Error retrieving");
+    let p_q1 = code.eq(reset_code);
+    let is_code_valid = select_list(connection, p_q1).expect("Error loading");
+
+    // let is_code_valid = self::schema::password_resets::dsl::password_resets
+    //     .filter(code.eq(&reset_code))
+    //     .load::<PasswordReset>(connection)
+    //     .expect("Error retrieving");
 
     if is_code_valid.is_empty() {
         return Json("code is invalid".to_string())
